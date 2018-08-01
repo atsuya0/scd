@@ -10,15 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Pair struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
-}
-
-type Source struct {
-	Pairs []Pair `json:"source"`
-}
-
 type Options struct {
 	name string
 	path string
@@ -45,7 +36,6 @@ func register(src string, options Options) (err error) {
 	}
 
 	decoder := json.NewDecoder(file)
-	// var pairs []Pair
 	var source Source
 	if err = decoder.Decode(&source); err == nil {
 		if err = isDuplicate(source.Pairs, options); err != nil {

@@ -1,10 +1,31 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 )
+
+type Pair struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
+}
+
+type Source struct {
+	Pairs []Pair `json:"source"`
+}
+
+func (s *Source) match(name string) (string, error) {
+	for _, pair := range s.Pairs {
+		if pair.Name == name {
+			return pair.Path, nil
+		}
+	}
+	err := fmt.Errorf("%s is invalid name.", name)
+
+	return "", err
+}
 
 func createRootCmd(src string) *cobra.Command {
 	var cmd = &cobra.Command{
@@ -13,14 +34,13 @@ func createRootCmd(src string) *cobra.Command {
 	}
 
 	cmd.AddCommand(createRegisterCmd(src))
-	// cmd.AddCommand(createListCmd(trashPath))
+	cmd.AddCommand(createChangeCmd(src))
 
 	return cmd
 }
 
 func Execute() {
-	// src := os.Getenv("HOME") + "/second_names"
-	src := os.Getenv("GOPATH") + "/src/cli/second/second_names"
+	src := os.Getenv("HOME") + "/.second_names"
 
 	cmd := createRootCmd(src)
 	cmd.SetOutput(os.Stdout)
