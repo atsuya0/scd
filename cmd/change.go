@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 	"syscall"
 
 	"github.com/spf13/cobra"
@@ -38,19 +38,18 @@ func change(src string, name string) (err error) {
 }
 
 func createChangeCmd(src string) *cobra.Command {
-	var name string
-
 	var cmd = &cobra.Command{
 		Use:   "change",
 		Short: "Change the working directory with the second name",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := change(src, name); err != nil {
-				log.Fatalln("change", err)
+			if len(args) == 0 {
+				log.Fatalln("change:", fmt.Errorf("At least one argument is required."))
+			}
+			if err := change(src, args[0]); err != nil {
+				log.Fatalln("change:", err)
 			}
 		},
 	}
-
-	cmd.Flags().StringVarP(&name, "name", "n", filepath.Base(os.Getenv("HOME")), "Second name")
 
 	return cmd
 }
