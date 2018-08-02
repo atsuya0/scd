@@ -14,22 +14,24 @@ type ListOptions struct {
 	path bool
 }
 
-func list(src string, options ListOptions) (err error) {
+func list(src string, options ListOptions) error {
 	file, err := os.Open(src)
 	if err != nil {
-		return
+		return err
 	}
 
 	decoder := json.NewDecoder(file)
 	var source Source
 	if err = decoder.Decode(&source); err != nil {
-		return
+		return err
 	}
 
 	if (options.name && options.path) || (!options.name && !options.path) {
-		for _, pair := range source.Pairs {
-			fmt.Println(pair)
+		bytes, err := json.MarshalIndent(source.Pairs, "", "  ")
+		if err != nil {
+			return err
 		}
+		fmt.Println(string(bytes))
 	} else if options.name {
 		for _, pair := range source.Pairs {
 			fmt.Println(pair.Name)
@@ -40,7 +42,7 @@ func list(src string, options ListOptions) (err error) {
 		}
 	}
 
-	return
+	return nil
 }
 
 func createListCmd(src string) *cobra.Command {
@@ -48,7 +50,7 @@ func createListCmd(src string) *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "List of second name.",
+		Short: "List of second name and target path.",
 		Run: func(cmd *cobra.Command, _ []string) {
 			if err := list(src, *options); err != nil {
 				log.Fatalln("list:", err)
