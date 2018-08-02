@@ -23,7 +23,7 @@ func change(src string, name string) (err error) {
 	}
 
 	shell := os.Getenv("SHELL")
-	path, err := source.match(name)
+	_, path, err := source.match(name)
 	if err != nil {
 		return
 	}

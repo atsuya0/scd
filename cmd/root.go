@@ -16,15 +16,15 @@ type Source struct {
 	Pairs []Pair `json:"source"`
 }
 
-func (s *Source) match(name string) (string, error) {
-	for _, pair := range s.Pairs {
+func (s *Source) match(name string) (int, string, error) {
+	for i, pair := range s.Pairs {
 		if pair.Name == name {
-			return pair.Path, nil
+			return i, pair.Path, nil
 		}
 	}
 	err := fmt.Errorf("%s is invalid name.", name)
 
-	return "", err
+	return 0, "", err
 }
 
 func (s *Source) isDuplicate(options RegisterOptions) (err error) {
@@ -41,6 +41,10 @@ func (s *Source) isDuplicate(options RegisterOptions) (err error) {
 	return nil
 }
 
+func (s *Source) del(i int) {
+	s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
+}
+
 func createRootCmd(src string) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "second",
@@ -50,6 +54,7 @@ func createRootCmd(src string) *cobra.Command {
 	cmd.AddCommand(createRegisterCmd(src))
 	cmd.AddCommand(createChangeCmd(src))
 	cmd.AddCommand(createListCmd(src))
+	cmd.AddCommand(createDeleteCmd(src))
 
 	return cmd
 }
