@@ -27,6 +27,20 @@ func (s *Source) match(name string) (string, error) {
 	return "", err
 }
 
+func (s *Source) isDuplicate(options RegisterOptions) (err error) {
+	for _, pair := range s.Pairs {
+		if pair.Name == options.name {
+			err = fmt.Errorf("This name has already been registered.")
+			return
+		}
+		if pair.Path == options.path {
+			err = fmt.Errorf("This path has already been registered.")
+			return
+		}
+	}
+	return nil
+}
+
 func createRootCmd(src string) *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "second",
@@ -35,6 +49,7 @@ func createRootCmd(src string) *cobra.Command {
 
 	cmd.AddCommand(createRegisterCmd(src))
 	cmd.AddCommand(createChangeCmd(src))
+	cmd.AddCommand(createListCmd(src))
 
 	return cmd
 }

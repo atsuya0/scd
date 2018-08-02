@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -10,26 +9,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type Options struct {
+type RegisterOptions struct {
 	name string
 	path string
 }
 
-func isDuplicate(pairs []Pair, options Options) (err error) {
-	for _, pair := range pairs {
-		if pair.Name == options.name {
-			err = fmt.Errorf("This name has already been registered.")
-			return
-		}
-		if pair.Path == options.path {
-			err = fmt.Errorf("This path has already been registered.")
-			return
-		}
-	}
-	return nil
-}
-
-func register(src string, options Options) (err error) {
+func register(src string, options RegisterOptions) (err error) {
 	file, err := os.OpenFile(src, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
 		return
@@ -38,7 +23,7 @@ func register(src string, options Options) (err error) {
 	decoder := json.NewDecoder(file)
 	var source Source
 	if err = decoder.Decode(&source); err == nil {
-		if err = isDuplicate(source.Pairs, options); err != nil {
+		if err = source.isDuplicate(options); err != nil {
 			return
 		}
 	}
@@ -56,7 +41,7 @@ func register(src string, options Options) (err error) {
 }
 
 func createRegisterCmd(src string) *cobra.Command {
-	options := &Options{}
+	options := &RegisterOptions{}
 
 	var cmd = &cobra.Command{
 		Use:   "register",
