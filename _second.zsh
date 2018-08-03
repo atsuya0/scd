@@ -8,7 +8,8 @@ function _second() {
       'register' \
       'change' \
       'list' \
-      'delete'
+      'delete' \
+      'init'
     )
 
     _describe -t commands Commands _c
@@ -42,6 +43,8 @@ function _second() {
           _values \
             'Second names' \
             $(second list --name)
+        ;;
+        (init)
         ;;
       esac
   esac

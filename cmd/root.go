@@ -40,7 +40,7 @@ func (s *Source) isDuplicate(options RegisterOptions) (err error) {
 			return
 		}
 	}
-	return nil
+	return
 }
 
 func (s *Source) del(i int) {
@@ -89,7 +89,7 @@ func loadSource(src string, flag int) (*os.File, Source) {
 }
 
 func createRootCmd() *cobra.Command {
-	src := os.Getenv("HOME") + "/.second_names"
+	src := os.Getenv("SECOND_CMD_PATH")
 
 	var cmd = &cobra.Command{
 		Use:   "second",
@@ -100,6 +100,7 @@ func createRootCmd() *cobra.Command {
 	cmd.AddCommand(createChangeCmd(src))
 	cmd.AddCommand(createListCmd(src))
 	cmd.AddCommand(createDeleteCmd(src))
+	cmd.AddCommand(createInitCmd(src))
 
 	return cmd
 }
