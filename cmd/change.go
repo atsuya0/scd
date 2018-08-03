@@ -1,38 +1,30 @@
 package cmd
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
-	"syscall"
+	// "syscall"
 
 	"github.com/spf13/cobra"
 )
 
 func change(src string, name string) (err error) {
-	file, err := os.Open(src)
-	if err != nil {
-		return
-	}
+	file, source := loadSource(src, os.O_RDONLY)
+	defer file.Close()
 
-	decoder := json.NewDecoder(file)
-	var source Source
-	if err = decoder.Decode(&source); err != nil {
-		return
-	}
-
-	shell := os.Getenv("SHELL")
 	_, path, err := source.match(name)
 	if err != nil {
 		return
 	}
-	if err = os.Chdir(path); err != nil {
-		return
-	}
-	if err = syscall.Exec(shell, []string{shell}, syscall.Environ()); err != nil {
-		return
-	}
+	fmt.Println(path)
+	// if err = os.Chdir(path); err != nil {
+	// 	return
+	// }
+	// shell := os.Getenv("SHELL")
+	// if err = syscall.Exec(shell, []string{shell}, syscall.Environ()); err != nil {
+	// 	return
+	// }
 
 	return
 }

@@ -10,14 +10,9 @@ import (
 )
 
 func del(src string, name string) (err error) {
-	file, err := os.OpenFile(src, os.O_RDWR|os.O_CREATE, 0600)
-	if err != nil {
-		return
-	}
-
-	decoder := json.NewDecoder(file)
-	var source Source
-	if err = decoder.Decode(&source); err != nil {
+	file, source := loadSource(src, os.O_RDWR)
+	defer file.Close()
+	if err = file.Truncate(0); err != nil {
 		return
 	}
 
@@ -29,9 +24,6 @@ func del(src string, name string) (err error) {
 
 	jsonBytes, err := json.Marshal(source)
 	if err != nil {
-		return
-	}
-	if err = file.Truncate(0); err != nil {
 		return
 	}
 	_, err = file.WriteAt(jsonBytes, 0)

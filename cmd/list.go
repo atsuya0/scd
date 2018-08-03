@@ -15,16 +15,8 @@ type ListOptions struct {
 }
 
 func list(src string, options ListOptions) error {
-	file, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-
-	decoder := json.NewDecoder(file)
-	var source Source
-	if err = decoder.Decode(&source); err != nil {
-		return err
-	}
+	file, source := loadSource(src, os.O_RDWR)
+	defer file.Close()
 
 	if (options.name && options.path) || (!options.name && !options.path) {
 		bytes, err := json.MarshalIndent(source.Pairs, "", "  ")

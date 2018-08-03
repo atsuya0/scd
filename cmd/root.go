@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -45,7 +47,50 @@ func (s *Source) del(i int) {
 	s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
 }
 
-func createRootCmd(src string) *cobra.Command {
+func newSourceFile(src string) error {
+	file, err := os.Create(src)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	jsonBytes, err := json.Marshal(Source{Pairs: []Pair{}})
+	if err != nil {
+		return err
+	}
+
+	_, err = file.Write(jsonBytes)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func loadSource(src string, flag int) (*os.File, Source) {
+	if _, err := os.Stat(src); err != nil {
+		if err := newSourceFile(src); err != nil {
+			log.Fatalln(err)
+		}
+	}
+
+	file, err := os.OpenFile(src, flag, 0600)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	decoder := json.NewDecoder(file)
+	source := Source{}
+	if err = decoder.Decode(&source); err != nil {
+		log.Fatalln(err)
+	}
+
+	return file, source
+}
+
+func createRootCmd() *cobra.Command {
+	src := os.Getenv("HOME") + "/.second_names"
+
 	var cmd = &cobra.Command{
 		Use:   "second",
 		Short: "You can switch path with the second name.",
@@ -60,9 +105,7 @@ func createRootCmd(src string) *cobra.Command {
 }
 
 func Execute() {
-	src := os.Getenv("HOME") + "/.second_names"
-
-	cmd := createRootCmd(src)
+	cmd := createRootCmd()
 	cmd.SetOutput(os.Stdout)
 
 	if err := cmd.Execute(); err != nil {

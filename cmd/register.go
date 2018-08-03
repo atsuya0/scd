@@ -15,18 +15,12 @@ type RegisterOptions struct {
 }
 
 func register(src string, options RegisterOptions) (err error) {
-	file, err := os.OpenFile(src, os.O_RDWR|os.O_CREATE, 0600)
-	if err != nil {
+	file, source := loadSource(src, os.O_RDWR)
+	defer file.Close()
+	if err = source.isDuplicate(options); err != nil {
 		return
 	}
 
-	decoder := json.NewDecoder(file)
-	var source Source
-	if err = decoder.Decode(&source); err == nil {
-		if err = source.isDuplicate(options); err != nil {
-			return
-		}
-	}
 	source.Pairs = append(source.Pairs, Pair{Name: options.name, Path: options.path})
 	jsonBytes, err := json.Marshal(source)
 	if err != nil {
