@@ -31,7 +31,7 @@ func register(src string, options RegisterOptions) (err error) {
 		return
 	}
 
-	return nil
+	return
 }
 
 func createRegisterCmd(src string) *cobra.Command {
