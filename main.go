@@ -1,4 +1,4 @@
-package main
+package second
 
 import (
 	"cli/second/cmd"

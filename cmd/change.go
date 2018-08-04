@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func change(src string, name string) (err error) {
-	file, source := loadSource(src, os.O_RDONLY)
+func change(name string) (err error) {
+	file, source := loadSource(os.O_RDONLY)
 	defer file.Close()
 
 	_, path, err := source.match(name)
@@ -29,7 +29,7 @@ func change(src string, name string) (err error) {
 	return
 }
 
-func createChangeCmd(src string) *cobra.Command {
+func createChangeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "change",
 		Short: "Change the working directory with the second name",
@@ -37,7 +37,7 @@ func createChangeCmd(src string) *cobra.Command {
 			if len(args) == 0 {
 				log.Fatalln("change:", fmt.Errorf("At least one argument is required."))
 			}
-			if err := change(src, args[0]); err != nil {
+			if err := change(args[0]); err != nil {
 				log.Fatalln("change:", err)
 			}
 		},

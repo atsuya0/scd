@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func initialize(src string) error {
+func initialize() error {
 	const yes = "yes"
 	const no = "no"
 
@@ -23,7 +23,7 @@ func initialize(src string) error {
 	}
 
 	if scanner.Text() == yes {
-		if err := newSourceFile(src); err != nil {
+		if err := newSourceFile(); err != nil {
 			return err
 		}
 		fmt.Println("Processing was successful.")
@@ -33,12 +33,12 @@ func initialize(src string) error {
 
 }
 
-func createInitializeCmd(src string) *cobra.Command {
+func createInitializeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "init",
 		Short: "Initialization of data.",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := initialize(src); err != nil {
+			if err := initialize(); err != nil {
 				log.Fatalln("init:", err)
 			}
 		},

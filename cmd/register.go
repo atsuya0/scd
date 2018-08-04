@@ -14,8 +14,8 @@ type RegisterOptions struct {
 	path string
 }
 
-func register(src string, options RegisterOptions) (err error) {
-	file, source := loadSource(src, os.O_RDWR)
+func register(options RegisterOptions) (err error) {
+	file, source := loadSource(os.O_RDWR)
 	defer file.Close()
 	if err = source.isDuplicate(options); err != nil {
 		return
@@ -34,14 +34,14 @@ func register(src string, options RegisterOptions) (err error) {
 	return
 }
 
-func createRegisterCmd(src string) *cobra.Command {
+func createRegisterCmd() *cobra.Command {
 	options := &RegisterOptions{}
 
 	var cmd = &cobra.Command{
 		Use:   "register",
 		Short: "Attach the second name to path",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := register(src, *options); err != nil {
+			if err := register(*options); err != nil {
 				log.Fatalln("register", err)
 			}
 		},

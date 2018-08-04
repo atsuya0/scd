@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func del(src string, name string) (err error) {
-	file, source := loadSource(src, os.O_RDWR)
+func del(name string) (err error) {
+	file, source := loadSource(os.O_RDWR)
 	defer file.Close()
 	if err = file.Truncate(0); err != nil {
 		return
@@ -34,7 +34,7 @@ func del(src string, name string) (err error) {
 	return
 }
 
-func createDeleteCmd(src string) *cobra.Command {
+func createDeleteCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
 		Short: "delete the second name",
@@ -42,7 +42,7 @@ func createDeleteCmd(src string) *cobra.Command {
 			if len(args) == 0 {
 				log.Fatalln("delete:", fmt.Errorf("At least one argument is required."))
 			}
-			if err := del(src, args[0]); err != nil {
+			if err := del(args[0]); err != nil {
 				log.Fatalln("delete:", err)
 			}
 		},

@@ -14,8 +14,8 @@ type ListOptions struct {
 	path bool
 }
 
-func list(src string, options ListOptions) error {
-	file, source := loadSource(src, os.O_RDWR)
+func list(options ListOptions) error {
+	file, source := loadSource(os.O_RDWR)
 	defer file.Close()
 
 	if (options.name && options.path) || (!options.name && !options.path) {
@@ -37,14 +37,14 @@ func list(src string, options ListOptions) error {
 	return nil
 }
 
-func createListCmd(src string) *cobra.Command {
+func createListCmd() *cobra.Command {
 	options := &ListOptions{}
 
 	var cmd = &cobra.Command{
 		Use:   "list",
 		Short: "List of second name and target path.",
 		Run: func(cmd *cobra.Command, _ []string) {
-			if err := list(src, *options); err != nil {
+			if err := list(*options); err != nil {
 				log.Fatalln("list:", err)
 			}
 		},
