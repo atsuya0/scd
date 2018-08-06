@@ -1,33 +1,27 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
+	"os"
 )
 
-func createRootCmd() *cobra.Command {
+func rootCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "second",
 		Short: "You can switch path with the second name.",
 	}
 
-	cmd.AddCommand(createRegisterCmd())
-	cmd.AddCommand(createChangeCmd())
-	cmd.AddCommand(createListCmd())
-	cmd.AddCommand(createDeleteCmd())
-	cmd.AddCommand(createInitializeCmd())
+	cmd.AddCommand(cmdRegister())
+	cmd.AddCommand(cmdChange())
+	cmd.AddCommand(cmdList())
+	cmd.AddCommand(cmdDelete())
+	cmd.AddCommand(cmdInitialize())
 
 	return cmd
 }
 
 func Execute() {
-	cmd := createRootCmd()
+	cmd := rootCmd()
 	cmd.SetOutput(os.Stdout)
-
-	if err := cmd.Execute(); err != nil {
-		cmd.SetOutput(os.Stderr)
-		cmd.Println(err)
-		os.Exit(1)
-	}
+	cmd.Execute()
 }

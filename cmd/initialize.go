@@ -3,13 +3,12 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
 )
 
-func initialize() error {
+func initialize(_ *cobra.Command, _ []string) error {
 	const yes = "yes"
 	const no = "no"
 
@@ -24,7 +23,7 @@ func initialize() error {
 
 	if scanner.Text() == yes {
 		if err := newSourceFile(); err != nil {
-			return err
+			return fmt.Errorf("init: %v", err)
 		}
 		fmt.Println("Processing was successful.")
 	}
@@ -33,15 +32,11 @@ func initialize() error {
 
 }
 
-func createInitializeCmd() *cobra.Command {
+func cmdInitialize() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "init",
 		Short: "Initialization of data.",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := initialize(); err != nil {
-				log.Fatalln("init:", err)
-			}
-		},
+		RunE:  initialize,
 	}
 
 	return cmd

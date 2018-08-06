@@ -2,45 +2,41 @@ package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 	// "syscall"
 
 	"github.com/spf13/cobra"
 )
 
-func change(name string) (err error) {
-	file, source := loadSource(os.O_RDONLY)
+func change(cmd *cobra.Command, args []string) error {
+	file, source, err := loadSource(os.O_RDONLY)
+	if err != nil {
+		return fmt.Errorf("change: %v", err)
+	}
 	defer file.Close()
 
-	_, path, err := source.match(name)
+	_, path, err := source.match(args[0])
 	if err != nil {
-		return
+		return fmt.Errorf("change: %v", err)
 	}
-	fmt.Println(path)
-	// if err = os.Chdir(path); err != nil {
-	// 	return
+	cmd.Print(path)
+	// if err := os.Chdir(path); err != nil {
+	// 	return err
 	// }
 	// shell := os.Getenv("SHELL")
-	// if err = syscall.Exec(shell, []string{shell}, syscall.Environ()); err != nil {
-	// 	return
+	// if err := syscall.Exec(shell, []string{shell}, syscall.Environ()); err != nil {
+	// 	return err
 	// }
 
-	return
+	return nil
 }
 
-func createChangeCmd() *cobra.Command {
+func cmdChange() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "change",
 		Short: "Change the working directory with the second name",
-		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) == 0 {
-				log.Fatalln("change:", fmt.Errorf("At least one argument is required."))
-			}
-			if err := change(args[0]); err != nil {
-				log.Fatalln("change:", err)
-			}
-		},
+		Args:  cobra.MinimumNArgs(1),
+		RunE:  change,
 	}
 
 	return cmd

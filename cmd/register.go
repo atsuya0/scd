@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,36 +15,37 @@ type RegisterOptions struct {
 	path string
 }
 
-func register(options RegisterOptions) (err error) {
-	file, source := loadSource(os.O_RDWR)
+func register(options *RegisterOptions) error {
+	file, source, err := loadSource(os.O_RDWR)
+	if err != nil {
+		return fmt.Errorf("register: %v", err)
+	}
 	defer file.Close()
-	if err = source.isDuplicate(options); err != nil {
-		return
+	if err = source.isDuplicate(*options); err != nil {
+		return fmt.Errorf("register: %v", err)
 	}
 
 	source.Pairs = append(source.Pairs, Pair{Name: options.name, Path: options.path})
 	jsonBytes, err := json.Marshal(source)
 	if err != nil {
-		return
+		return fmt.Errorf("register: %v", err)
 	}
 	_, err = file.WriteAt(jsonBytes, 0)
 	if err != nil {
-		return
+		return fmt.Errorf("register: %v", err)
 	}
 
-	return
+	return nil
 }
 
-func createRegisterCmd() *cobra.Command {
+func cmdRegister() *cobra.Command {
 	options := &RegisterOptions{}
 
 	var cmd = &cobra.Command{
 		Use:   "register",
 		Short: "Attach the second name to path",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := register(*options); err != nil {
-				log.Fatalln("register", err)
-			}
+		RunE: func(_ *cobra.Command, _ []string) error {
+			return register(options)
 		},
 	}
 
