@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"log"
+	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -47,22 +47,26 @@ func (s *Source) del(i int) {
 	s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
 }
 
-func src() string {
+func getSrc() (string, error) {
 	path := os.Getenv("SECOND_CMD_PATH")
 
 	if path != "" {
-		return path
+		return path, nil
 	} else {
 		user, err := user.Current()
 		if err != nil {
-			log.Fatalln(err)
+			return "", err
 		}
-		return filepath.Join(user.HomeDir, ".second")
+		return filepath.Join(user.HomeDir, ".second"), nil
 	}
 }
 
 func newSourceFile() error {
-	file, err := os.Create(src())
+	src, err := getSrc()
+	if err != nil {
+		return err
+	}
+	file, err := os.Create(src)
 	if err != nil {
 		return err
 	}
@@ -81,23 +85,33 @@ func newSourceFile() error {
 	return nil
 }
 
-func loadSource(flag int) (*os.File, Source) {
-	if _, err := os.Stat(src()); err != nil {
+func loadSource(flag int) (*os.File, Source, error) {
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "second")
+	if err != nil {
+		return tmpFile, Source{}, err
+	}
+
+	src, err := getSrc()
+	if err != nil {
+		return tmpFile, Source{}, err
+	}
+
+	if _, err := os.Stat(src); err != nil {
 		if err := newSourceFile(); err != nil {
-			log.Fatalln(err)
+			return tmpFile, Source{}, err
 		}
 	}
 
-	file, err := os.OpenFile(src(), flag, 0600)
+	file, err := os.OpenFile(src, flag, 0600)
 	if err != nil {
-		log.Fatalln(err)
+		return tmpFile, Source{}, err
 	}
 
 	decoder := json.NewDecoder(file)
 	source := Source{}
 	if err = decoder.Decode(&source); err != nil {
-		log.Fatalln(err)
+		return tmpFile, Source{}, err
 	}
 
-	return file, source
+	return file, source, nil
 }
