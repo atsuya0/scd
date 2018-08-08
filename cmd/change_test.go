@@ -14,10 +14,9 @@ func TestChange(t *testing.T) {
 	patterns := []struct {
 		cmd    string
 		output string
-		err    string
 	}{
-		{cmd: "second change bin", output: "/usr/bin", err: "%s is not %s"},
-		{cmd: "second change xd", output: "/etc/X11/xorg.conf.d", err: "%s is not %s"},
+		{cmd: "second change bin", output: "/usr/bin"},
+		{cmd: "second change xd", output: "/etc/X11/xorg.conf.d"},
 	}
 
 	path, err := filepath.Abs("./testdata/test.json")
@@ -42,7 +41,7 @@ func TestChange(t *testing.T) {
 
 		result := buffer.String()
 		if p.output != result {
-			t.Errorf(p.err, result, p.output)
+			t.Errorf("%s is not %s", result, p.output)
 		}
 	}
 }
