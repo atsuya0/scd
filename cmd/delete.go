@@ -22,7 +22,9 @@ func del(_ *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("delete: %v", err)
 	}
-	source.del(num)
+	if err := source.del(num); err != nil {
+		return fmt.Errorf("delete: %v", err)
+	}
 
 	jsonBytes, err := json.Marshal(source)
 	if err != nil {

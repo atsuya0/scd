@@ -43,8 +43,13 @@ func (s *Source) isDuplicate(options RegisterOptions) (err error) {
 	return
 }
 
-func (s *Source) del(i int) {
-	s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
+func (s *Source) del(i int) error {
+
+	if 0 <= i && i < len(s.Pairs) {
+		s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
+		return nil
+	}
+	return fmt.Errorf("out of range.")
 }
 
 func getSrc() (string, error) {
