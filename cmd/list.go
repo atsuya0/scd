@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -13,7 +14,7 @@ type ListOptions struct {
 	path bool
 }
 
-func list(cmd *cobra.Command, options *ListOptions) error {
+func list(options *ListOptions, out io.Writer) error {
 	file, source, err := loadSource(os.O_RDWR)
 	if err != nil {
 		return fmt.Errorf("list: %v", err)
@@ -25,14 +26,14 @@ func list(cmd *cobra.Command, options *ListOptions) error {
 		if err != nil {
 			return fmt.Errorf("list: %v", err)
 		}
-		cmd.Println(string(bytes))
+		fmt.Fprintln(out, string(bytes))
 	} else if options.name {
 		for _, pair := range source.Pairs {
-			cmd.Println(pair.Name)
+			fmt.Fprintln(out, pair.Name)
 		}
 	} else if options.path {
 		for _, pair := range source.Pairs {
-			cmd.Println(pair.Path)
+			fmt.Fprintln(out, pair.Path)
 		}
 	}
 
@@ -45,8 +46,8 @@ func cmdList() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
 		Short: "List of second name and target path.",
-		RunE: func(cmd *cobra.Command, _ []string) error {
-			return list(cmd, options)
+		RunE: func(_ *cobra.Command, _ []string) error {
+			return list(options, os.Stdout)
 		},
 	}
 
