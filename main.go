@@ -1,7 +1,7 @@
 package second
 
 import (
-	"cli/second/cmd"
+	"github.com/tayusa/second/cmd"
 )
 
 func main() {
