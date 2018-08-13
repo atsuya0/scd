@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -44,7 +43,6 @@ func (s *Source) isDuplicate(options RegisterOptions) (err error) {
 }
 
 func (s *Source) del(i int) error {
-
 	if 0 <= i && i < len(s.Pairs) {
 		s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
 		return nil
@@ -91,31 +89,26 @@ func newSourceFile() error {
 }
 
 func loadSource(flag int) (*os.File, Source, error) {
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "second")
-	if err != nil {
-		return tmpFile, Source{}, err
-	}
-
 	src, err := getSrc()
 	if err != nil {
-		return tmpFile, Source{}, err
+		return &os.File{}, Source{}, err
 	}
 
 	if _, err := os.Stat(src); err != nil {
 		if err := newSourceFile(); err != nil {
-			return tmpFile, Source{}, err
+			return &os.File{}, Source{}, err
 		}
 	}
 
 	file, err := os.OpenFile(src, flag, 0600)
 	if err != nil {
-		return tmpFile, Source{}, err
+		return &os.File{}, Source{}, err
 	}
 
 	decoder := json.NewDecoder(file)
 	source := Source{}
 	if err = decoder.Decode(&source); err != nil {
-		return tmpFile, Source{}, err
+		return &os.File{}, Source{}, err
 	}
 
 	return file, source, nil
