@@ -17,7 +17,7 @@ func TestList(t *testing.T) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	if err := os.Setenv("SECOND_CMD_PATH", path); err != nil {
+	if err := os.Setenv("SECOND_LIST_PATH", path); err != nil {
 		log.Fatalln(err)
 	}
 

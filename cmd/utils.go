@@ -51,7 +51,7 @@ func (s *Source) del(i int) error {
 }
 
 func getSrc() (string, error) {
-	path := os.Getenv("SECOND_CMD_PATH")
+	path := os.Getenv("SECOND_LIST_PATH")
 
 	if path != "" {
 		return path, nil
@@ -60,7 +60,7 @@ func getSrc() (string, error) {
 		if err != nil {
 			return "", err
 		}
-		return filepath.Join(user.HomeDir, ".second"), nil
+		return filepath.Join(user.HomeDir, ".second_list"), nil
 	}
 }
 
