@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/user"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -20,7 +22,11 @@ func register(options *RegisterOptions) error {
 	if err != nil {
 		return fmt.Errorf("register: %v", err)
 	}
-	defer file.Close()
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	if err = source.isDuplicate(*options); err != nil {
 		return fmt.Errorf("register: %v", err)
 	}
@@ -53,8 +59,16 @@ func cmdRegister() *cobra.Command {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	cmd.Flags().StringVarP(&options.name, "name", "n", filepath.Base(wd), "Second name")
-	cmd.Flags().StringVarP(&options.path, "path", "p", wd, "Target path")
+	user, err := user.Current()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	cmd.Flags().StringVarP(
+		&options.name, "name", "n", filepath.Base(wd), "Second name")
+	cmd.Flags().StringVarP(
+		&options.path, "path", "p", strings.Replace(wd, user.HomeDir, "~", 1),
+		"Target path")
 
 	return cmd
 }
