@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 	// "syscall"
 
 	"github.com/spf13/cobra"
@@ -19,7 +20,7 @@ func change(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("change: %v", err)
 	}
-	cmd.Print(path)
+	cmd.Print(strings.Replace(path, "~", os.Getenv("HOME"), 1))
 	// if err := os.Chdir(path); err != nil {
 	// 	return err
 	// }
