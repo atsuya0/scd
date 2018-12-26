@@ -79,3 +79,10 @@ function second_with_tmux_session() {
   tmux new-session -s ${session_name} -d -c $(command second change ${session_name})
   tmux switch-client -t ${session_name}
 }
+
+function _second_with_tmux_session() {
+  _values \
+    'Session names' \
+    $(print_available_session_names)
+}
+compdef _second_with_tmux_session second_with_tmux_session
