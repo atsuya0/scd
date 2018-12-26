@@ -50,3 +50,32 @@ function _second() {
   esac
 }
 compdef _second second
+
+function print_available_session_names() {
+  diff --new-line-format='' --old-line-format='%L' --unchanged-line-format='' \
+    <(second list --name) <(tmux ls -F '#{session_name}')
+}
+
+function second_with_tmux_session() {
+  [[ -z ${commands[second]} ]] \
+    && { echo 'second is required.';  return 1; }
+  [[ -z ${commands[tmux]} ]] \
+    && { echo 'tmux is required.'; return 1; }
+
+  if [[ $# -eq 0 ]]; then
+    [[ -z ${commands[fzf]} ]] && { print_available_session_names; return 1; }
+    local -r session_name=$(print_available_session_names | fzf)
+    [[ -z ${session_name} ]] && return 1
+  else
+    local -r session_name=$1
+    second list --name \
+      | grep -q "^${session_name}$" \
+      || { echo 'invalid argument'; return 1; }
+    tmux ls -F '#{session_name}' \
+      | grep -q "^${session_name}$" \
+      && { echo 'already exists'; return 1; }
+  fi
+
+  tmux new-session -s ${session_name} -d -c $(command second change ${session_name})
+  tmux switch-client -t ${session_name}
+}
