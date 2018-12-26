@@ -86,3 +86,5 @@ function _second_with_tmux_session() {
     $(print_available_session_names)
 }
 compdef _second_with_tmux_session second_with_tmux_session
+
+alias tsc='second_with_tmux_session'
