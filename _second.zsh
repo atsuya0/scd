@@ -1,29 +1,21 @@
 function _second() {
-  local ret=1
-
   function sub_commands() {
-    local -a _c
-
-    _c=(
-      'register' \
+    _values 'Commands' \
       'change' \
+      'register' \
       'list' \
       'delete' \
       'init'
-    )
-
-    _describe -t commands Commands _c
   }
 
   _arguments -C \
     '(-h --help)'{-h,--help}'[show help]' \
     '1: :sub_commands' \
-    '*:: :->args' \
-    && ret=0
+    '*:: :->args'
 
-  case ${state} in
+  case "${state}" in
     (args)
-      case ${words[1]} in
+      case "${words[1]}" in
         (register)
           _arguments \
             '(-n --name)'{-n,--name}'[Second name]' \
@@ -48,7 +40,5 @@ function _second() {
         ;;
       esac
   esac
-
-  return ret
 }
 compdef _second second
