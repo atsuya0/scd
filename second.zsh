@@ -4,12 +4,11 @@ function second() {
     || command second $@
 }
 
-alias sc='second'
-
 function _second() {
   function sub_commands() {
     _values 'Commands' \
       'change' \
+      'show' \
       'register' \
       'list' \
       'delete' \
@@ -17,7 +16,7 @@ function _second() {
   }
 
   _arguments -C \
-    '(-h --help)'{-h,--help}'[show help]' \
+    '(-h --help)'{-h,--help}'[help]' \
     '1: :sub_commands' \
     '*:: :->args'
 
@@ -30,6 +29,11 @@ function _second() {
             '(-p --path)'{-p,--path}'[Target path]'
         ;;
         (change)
+          _values \
+            'Second names' \
+            $(second list --name)
+        ;;
+        (show)
           _values \
             'Second names' \
             $(second list --name)
@@ -50,6 +54,8 @@ function _second() {
   esac
 }
 compdef _second second
+
+alias sc='second'
 
 function print_available_session_names() {
   diff --new-line-format='' --old-line-format='%L' --unchanged-line-format='' \

@@ -13,6 +13,7 @@ func rootCmd() *cobra.Command {
 
 	cmd.AddCommand(cmdRegister())
 	cmd.AddCommand(cmdChange())
+	cmd.AddCommand(cmdShow())
 	cmd.AddCommand(cmdList())
 	cmd.AddCommand(cmdDelete())
 	cmd.AddCommand(cmdInitialize())
