@@ -32,7 +32,7 @@ func initialize(_ *cobra.Command, _ []string) error {
 
 }
 
-func cmdInitialize() *cobra.Command {
+func initializeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "init",
 		Short: "Initialization of data.",

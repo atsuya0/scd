@@ -45,7 +45,7 @@ func list(options *ListOptions, out io.Writer) error {
 	return nil
 }
 
-func cmdList() *cobra.Command {
+func listCmd() *cobra.Command {
 	options := &ListOptions{}
 
 	var cmd = &cobra.Command{

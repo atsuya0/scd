@@ -38,7 +38,7 @@ func change(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func cmdChange() *cobra.Command {
+func changeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "change",
 		Short: "Change the working directory with the second name",

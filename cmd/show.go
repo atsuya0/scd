@@ -29,7 +29,7 @@ func show(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func cmdShow() *cobra.Command {
+func showCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "show",
 		Short: "Show the second name",

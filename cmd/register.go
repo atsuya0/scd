@@ -45,7 +45,7 @@ func register(options *RegisterOptions) error {
 	return nil
 }
 
-func cmdRegister() *cobra.Command {
+func registerCmd() *cobra.Command {
 	options := &RegisterOptions{}
 
 	var cmd = &cobra.Command{
