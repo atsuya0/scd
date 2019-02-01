@@ -19,14 +19,15 @@ type RegisterOptions struct {
 
 func register(options *RegisterOptions) error {
 	file, source, err := loadSource(os.O_RDWR)
-	if err != nil {
-		return fmt.Errorf("register: %v", err)
-	}
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
+	if err != nil {
+		return fmt.Errorf("register: %v", err)
+	}
+
 	if err = source.isDuplicate(*options); err != nil {
 		return fmt.Errorf("register: %v", err)
 	}

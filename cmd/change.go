@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
+
 	// "syscall"
 
 	"github.com/spf13/cobra"
@@ -11,10 +13,14 @@ import (
 
 func change(cmd *cobra.Command, args []string) error {
 	file, source, err := loadSource(os.O_RDONLY)
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	if err != nil {
 		return fmt.Errorf("change: %v", err)
 	}
-	defer file.Close()
 
 	_, path, err := source.match(args[0])
 	if err != nil {

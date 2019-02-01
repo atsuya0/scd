@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -10,10 +11,15 @@ import (
 
 func del(_ *cobra.Command, args []string) error {
 	file, source, err := loadSource(os.O_RDWR)
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	if err != nil {
 		return fmt.Errorf("delete: %v", err)
 	}
-	defer file.Close()
+
 	if err = file.Truncate(0); err != nil {
 		return fmt.Errorf("delete: %v", err)
 	}

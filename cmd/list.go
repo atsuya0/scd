@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -16,10 +17,14 @@ type ListOptions struct {
 
 func list(options *ListOptions, out io.Writer) error {
 	file, source, err := loadSource(os.O_RDWR)
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 	if err != nil {
 		return fmt.Errorf("list: %v", err)
 	}
-	defer file.Close()
 
 	if (options.name && options.path) || (!options.name && !options.path) {
 		bytes, err := json.MarshalIndent(source.Pairs, "", "  ")
