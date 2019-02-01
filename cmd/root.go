@@ -8,7 +8,7 @@ import (
 func rootCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "second",
-		Short: "You can switch path with the second name.",
+		Short: "Change the working directory with the second name.",
 	}
 
 	cmd.AddCommand(cmdRegister())
