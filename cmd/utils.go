@@ -66,11 +66,11 @@ func getListPath() (string, error) {
 }
 
 func newListFile() error {
-	src, err := getListPath()
+	path, err := getListPath()
 	if err != nil {
 		return err
 	}
-	file, err := os.Create(src)
+	file, err := os.Create(path)
 	if err != nil {
 		return err
 	}
