@@ -10,7 +10,7 @@ import (
 )
 
 func del(_ *cobra.Command, args []string) error {
-	file, source, err := loadSource(os.O_RDWR)
+	file, list, err := loadList(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalln(err)
@@ -24,15 +24,15 @@ func del(_ *cobra.Command, args []string) error {
 		return fmt.Errorf("delete: %v", err)
 	}
 
-	num, _, err := source.match(args[0])
+	num, _, err := list.match(args[0])
 	if err != nil {
 		return fmt.Errorf("delete: %v", err)
 	}
-	if err := source.del(num); err != nil {
+	if err := list.del(num); err != nil {
 		return fmt.Errorf("delete: %v", err)
 	}
 
-	jsonBytes, err := json.Marshal(source)
+	jsonBytes, err := json.Marshal(list)
 	if err != nil {
 		return fmt.Errorf("delete: %v", err)
 	}

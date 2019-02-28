@@ -10,7 +10,7 @@ import (
 )
 
 func show(cmd *cobra.Command, args []string) error {
-	file, source, err := loadSource(os.O_RDONLY)
+	file, list, err := loadList(os.O_RDONLY)
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalln(err)
@@ -20,7 +20,7 @@ func show(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("show: %v", err)
 	}
 
-	_, path, err := source.match(args[0])
+	_, path, err := list.match(args[0])
 	if err != nil {
 		return fmt.Errorf("show: %v", err)
 	}

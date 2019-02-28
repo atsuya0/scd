@@ -16,7 +16,7 @@ type ListOptions struct {
 }
 
 func list(options *ListOptions, out io.Writer) error {
-	file, source, err := loadSource(os.O_RDWR)
+	file, list, err := loadList(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalln(err)
@@ -27,17 +27,17 @@ func list(options *ListOptions, out io.Writer) error {
 	}
 
 	if (options.name && options.path) || (!options.name && !options.path) {
-		bytes, err := json.MarshalIndent(source.Pairs, "", "  ")
+		bytes, err := json.MarshalIndent(list.Pairs, "", "  ")
 		if err != nil {
 			return fmt.Errorf("list: %v", err)
 		}
 		fmt.Fprintln(out, string(bytes))
 	} else if options.name {
-		for _, pair := range source.Pairs {
+		for _, pair := range list.Pairs {
 			fmt.Fprintln(out, pair.Name)
 		}
 	} else if options.path {
-		for _, pair := range source.Pairs {
+		for _, pair := range list.Pairs {
 			fmt.Fprintln(out, pair.Path)
 		}
 	}

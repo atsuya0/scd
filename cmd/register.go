@@ -18,7 +18,7 @@ type RegisterOptions struct {
 }
 
 func register(options *RegisterOptions) error {
-	file, source, err := loadSource(os.O_RDWR)
+	file, list, err := loadList(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalln(err)
@@ -28,12 +28,12 @@ func register(options *RegisterOptions) error {
 		return fmt.Errorf("register: %v", err)
 	}
 
-	if err = source.isDuplicate(*options); err != nil {
+	if err = list.isDuplicate(*options); err != nil {
 		return fmt.Errorf("register: %v", err)
 	}
 
-	source.Pairs = append(source.Pairs, Pair{Name: options.name, Path: options.path})
-	jsonBytes, err := json.Marshal(source)
+	list.Pairs = append(list.Pairs, Pair{Name: options.name, Path: options.path})
+	jsonBytes, err := json.Marshal(list)
 	if err != nil {
 		return fmt.Errorf("register: %v", err)
 	}

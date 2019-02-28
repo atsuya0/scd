@@ -14,12 +14,12 @@ type Pair struct {
 	Path string `json:"path"`
 }
 
-type Source struct {
-	Pairs []Pair `json:"source"`
+type List struct {
+	Pairs []Pair `json:"list"`
 }
 
-func (s *Source) match(name string) (int, string, error) {
-	for i, pair := range s.Pairs {
+func (l *List) match(name string) (int, string, error) {
+	for i, pair := range l.Pairs {
 		if pair.Name == name {
 			return i, pair.Path, nil
 		}
@@ -29,8 +29,8 @@ func (s *Source) match(name string) (int, string, error) {
 	return 0, "", err
 }
 
-func (s *Source) isDuplicate(options RegisterOptions) (err error) {
-	for _, pair := range s.Pairs {
+func (l *List) isDuplicate(options RegisterOptions) (err error) {
+	for _, pair := range l.Pairs {
 		if pair.Name == options.name {
 			err = fmt.Errorf("This name has already been registered.")
 			return
@@ -43,9 +43,9 @@ func (s *Source) isDuplicate(options RegisterOptions) (err error) {
 	return
 }
 
-func (s *Source) del(i int) error {
-	if 0 <= i && i < len(s.Pairs) {
-		s.Pairs = append(s.Pairs[:i:i], s.Pairs[i+1:]...)
+func (l *List) del(i int) error {
+	if 0 <= i && i < len(l.Pairs) {
+		l.Pairs = append(l.Pairs[:i:i], l.Pairs[i+1:]...)
 		return nil
 	}
 	return fmt.Errorf("out of range.")
@@ -65,7 +65,7 @@ func getListPath() (string, error) {
 	}
 }
 
-func newSourceFile() error {
+func newListFile() error {
 	src, err := getListPath()
 	if err != nil {
 		return err
@@ -80,7 +80,7 @@ func newSourceFile() error {
 		}
 	}()
 
-	jsonBytes, err := json.Marshal(Source{Pairs: []Pair{}})
+	jsonBytes, err := json.Marshal(List{Pairs: []Pair{}})
 	if err != nil {
 		return err
 	}
@@ -93,28 +93,28 @@ func newSourceFile() error {
 	return nil
 }
 
-func loadSource(flag int) (*os.File, Source, error) {
+func loadList(flag int) (*os.File, List, error) {
 	path, err := getListPath()
 	if err != nil {
-		return &os.File{}, Source{}, err
+		return &os.File{}, List{}, err
 	}
 
 	if _, err := os.Stat(path); err != nil {
-		if err := newSourceFile(); err != nil {
-			return &os.File{}, Source{}, err
+		if err := newListFile(); err != nil {
+			return &os.File{}, List{}, err
 		}
 	}
 
 	file, err := os.OpenFile(path, flag, 0600)
 	if err != nil {
-		return &os.File{}, Source{}, err
+		return &os.File{}, List{}, err
 	}
 
 	decoder := json.NewDecoder(file)
-	source := Source{}
-	if err = decoder.Decode(&source); err != nil {
-		return &os.File{}, Source{}, err
+	var list List
+	if err = decoder.Decode(&list); err != nil {
+		return &os.File{}, List{}, err
 	}
 
-	return file, source, nil
+	return file, list, nil
 }

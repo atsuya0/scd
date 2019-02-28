@@ -22,7 +22,7 @@ func initialize(_ *cobra.Command, _ []string) error {
 	}
 
 	if scanner.Text() == yes {
-		if err := newSourceFile(); err != nil {
+		if err := newListFile(); err != nil {
 			return fmt.Errorf("init: %v", err)
 		}
 		fmt.Println("Processing was successful.")
