@@ -58,13 +58,13 @@ func getListPath() (string, error) {
 	if path != "" {
 		return path, nil
 	} else if xdg != "" {
-		return filepath.Join(xdg, "list.json"), nil
+		return filepath.Join(xdg, "second", "list.json"), nil
 	} else {
 		user, err := user.Current()
 		if err != nil {
 			return "", err
 		}
-		return filepath.Join(user.HomeDir, ".config", "list.json"), nil
+		return filepath.Join(user.HomeDir, ".config", "second", "list.json"), nil
 	}
 }
 
