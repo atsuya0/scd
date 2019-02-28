@@ -58,7 +58,7 @@ func getListPath() (string, error) {
 	if path != "" {
 		return path, nil
 	} else if xdg != "" {
-		return filepath.Join(xdg, ".second_list"), nil
+		return filepath.Join(xdg, "list.json"), nil
 	} else {
 		user, err := user.Current()
 		if err != nil {
