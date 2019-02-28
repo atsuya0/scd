@@ -53,15 +53,18 @@ func (l *List) del(i int) error {
 
 func getListPath() (string, error) {
 	path := os.Getenv("SECOND_LIST_PATH")
+	xdg := os.Getenv("XDG_CONFIG_HOME")
 
 	if path != "" {
 		return path, nil
+	} else if xdg != "" {
+		return filepath.Join(xdg, ".second_list"), nil
 	} else {
 		user, err := user.Current()
 		if err != nil {
 			return "", err
 		}
-		return filepath.Join(user.HomeDir, ".second_list"), nil
+		return filepath.Join(user.HomeDir, ".config", "list.json"), nil
 	}
 }
 
