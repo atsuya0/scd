@@ -94,18 +94,18 @@ func newSourceFile() error {
 }
 
 func loadSource(flag int) (*os.File, Source, error) {
-	src, err := getListPath()
+	path, err := getListPath()
 	if err != nil {
 		return &os.File{}, Source{}, err
 	}
 
-	if _, err := os.Stat(src); err != nil {
+	if _, err := os.Stat(path); err != nil {
 		if err := newSourceFile(); err != nil {
 			return &os.File{}, Source{}, err
 		}
 	}
 
-	file, err := os.OpenFile(src, flag, 0600)
+	file, err := os.OpenFile(path, flag, 0600)
 	if err != nil {
 		return &os.File{}, Source{}, err
 	}
