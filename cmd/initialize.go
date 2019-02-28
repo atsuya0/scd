@@ -21,12 +21,14 @@ func initialize(_ *cobra.Command, _ []string) error {
 		scanner.Scan()
 	}
 
-	if scanner.Text() == yes {
-		if err := formatFile(); err != nil {
-			return fmt.Errorf("init: %v", err)
-		}
-		fmt.Println("Processing was successful.")
+	if scanner.Text() == no {
+		return nil
 	}
+
+	if err := formatFile(); err != nil {
+		return fmt.Errorf("init: %v", err)
+	}
+	fmt.Println("Processing was successful.")
 
 	return nil
 
