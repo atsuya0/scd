@@ -68,7 +68,7 @@ func getListPath() (string, error) {
 	}
 }
 
-func newListFile() error {
+func formatFile() error {
 	path, err := getListPath()
 	if err != nil {
 		return err
@@ -103,7 +103,7 @@ func loadList(flag int) (*os.File, List, error) {
 	}
 
 	if _, err := os.Stat(path); err != nil {
-		if err := newListFile(); err != nil {
+		if err := formatFile(); err != nil {
 			return &os.File{}, List{}, err
 		}
 	}
