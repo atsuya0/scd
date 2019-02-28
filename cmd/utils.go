@@ -51,7 +51,7 @@ func (s *Source) del(i int) error {
 	return fmt.Errorf("out of range.")
 }
 
-func getSrc() (string, error) {
+func getListPath() (string, error) {
 	path := os.Getenv("SECOND_LIST_PATH")
 
 	if path != "" {
@@ -66,7 +66,7 @@ func getSrc() (string, error) {
 }
 
 func newSourceFile() error {
-	src, err := getSrc()
+	src, err := getListPath()
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func newSourceFile() error {
 }
 
 func loadSource(flag int) (*os.File, Source, error) {
-	src, err := getSrc()
+	src, err := getListPath()
 	if err != nil {
 		return &os.File{}, Source{}, err
 	}
