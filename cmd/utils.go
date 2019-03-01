@@ -51,20 +51,51 @@ func (l *List) del(i int) error {
 	return fmt.Errorf("out of range.")
 }
 
-func getListPath() (string, error) {
+func getEnvPath() (string, error) {
 	path := os.Getenv("SECOND_LIST_PATH")
-	xdg := os.Getenv("XDG_CONFIG_HOME")
+	if path == "" {
+		return "", fmt.Errorf("Cannot get path what use defined env")
+	}
+	return path, nil
+}
 
-	if path != "" {
+func getXdgPath() (string, error) {
+	conf := os.Getenv("XDG_CONFIG_HOME")
+	if conf == "" {
+		return "", fmt.Errorf("Cannot get path what use XDG_CONFIG_HOME")
+	}
+	path := filepath.Join(conf, "second")
+	if err := os.MkdirAll(path, 0700); err != nil {
+		return "", err
+	}
+
+	return filepath.Join(path, "list.json"), nil
+}
+
+func getConfPath() (string, error) {
+	user, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	path := filepath.Join(user.HomeDir, ".config", "second")
+	if err := os.MkdirAll(path, 0700); err != nil {
+		return "", err
+	}
+
+	return filepath.Join(path, "list.json"), nil
+}
+
+func getListPath() (string, error) {
+	if path, err := getEnvPath(); err == nil {
 		return path, nil
-	} else if xdg != "" {
-		return filepath.Join(xdg, "second", "list.json"), nil
+	}
+	if path, err := getXdgPath(); err == nil {
+		return path, nil
+	}
+	if path, err := getConfPath(); err == nil {
+		return path, nil
 	} else {
-		user, err := user.Current()
-		if err != nil {
-			return "", err
-		}
-		return filepath.Join(user.HomeDir, ".config", "second", "list.json"), nil
+		return "", err
 	}
 }
 
