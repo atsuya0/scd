@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func del(_ *cobra.Command, args []string) error {
+func remove(_ *cobra.Command, args []string) error {
 	file, list, err := loadList(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
@@ -17,39 +17,39 @@ func del(_ *cobra.Command, args []string) error {
 		}
 	}()
 	if err != nil {
-		return fmt.Errorf("delete: %v", err)
+		return fmt.Errorf("remove: %v", err)
 	}
 
 	if err = file.Truncate(0); err != nil {
-		return fmt.Errorf("delete: %v", err)
+		return fmt.Errorf("remove: %v", err)
 	}
 
 	num, _, err := list.match(args[0])
 	if err != nil {
-		return fmt.Errorf("delete: %v", err)
+		return fmt.Errorf("remove: %v", err)
 	}
 	if err := list.del(num); err != nil {
-		return fmt.Errorf("delete: %v", err)
+		return fmt.Errorf("remove: %v", err)
 	}
 
 	jsonBytes, err := json.Marshal(list)
 	if err != nil {
-		return fmt.Errorf("delete: %v", err)
+		return fmt.Errorf("remove: %v", err)
 	}
 	_, err = file.WriteAt(jsonBytes, 0)
 	if err != nil {
-		return fmt.Errorf("delete: %v", err)
+		return fmt.Errorf("remove: %v", err)
 	}
 
 	return nil
 }
 
-func deleteCmd() *cobra.Command {
+func removeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Short: "delete the second name",
+		Use:   "remove",
+		Short: "remove the second name",
 		Args:  cobra.MinimumNArgs(1),
-		RunE:  del,
+		RunE:  remove,
 	}
 
 	return cmd

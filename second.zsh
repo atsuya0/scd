@@ -11,7 +11,7 @@ function _second() {
       'show' \
       'register' \
       'list' \
-      'delete' \
+      'remove' \
       'init'
   }
 
@@ -43,7 +43,7 @@ function _second() {
             '(-n --name)'{-n,--name}'[Second name]' \
             '(-p --path)'{-p,--path}'[Target path]'
         ;;
-        (delete)
+        (remove)
           _values \
             'Second names' \
             $(second list --name)
