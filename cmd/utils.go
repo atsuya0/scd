@@ -83,7 +83,7 @@ func formatFile() error {
 		}
 	}()
 
-	jsonBytes, err := json.Marshal(List{Pairs: []Pair{}})
+	jsonBytes, err := json.Marshal(List{})
 	if err != nil {
 		return err
 	}
