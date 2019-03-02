@@ -1,6 +1,6 @@
 # Available Commands
 ## register
-Attach the second name to path.
+Attach the second name to the target path.
 
 |option|description|default|
 |-|-|-|
