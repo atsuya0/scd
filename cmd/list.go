@@ -50,14 +50,14 @@ func listCmd() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "List of second name and target path.",
+		Short: "List the second name and the target path in JSON format.",
 		RunE: func(_ *cobra.Command, _ []string) error {
 			return list(options, os.Stdout)
 		},
 	}
 
-	cmd.Flags().BoolVarP(&options.name, "name", "n", false, "Second name")
-	cmd.Flags().BoolVarP(&options.path, "path", "p", false, "Target path")
+	cmd.Flags().BoolVarP(&options.name, "name", "n", false, "the second name")
+	cmd.Flags().BoolVarP(&options.path, "path", "p", false, "the target path")
 
 	return cmd
 }

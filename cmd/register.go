@@ -50,7 +50,7 @@ func registerCmd() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "register",
-		Short: "Attach the second name to path",
+		Short: "Attach the second name to the target path",
 		RunE: func(_ *cobra.Command, _ []string) error {
 			return register(options)
 		},
@@ -66,10 +66,10 @@ func registerCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVarP(
-		&options.name, "name", "n", filepath.Base(wd), "Second name")
+		&options.name, "name", "n", filepath.Base(wd), "the second name")
 	cmd.Flags().StringVarP(
 		&options.path, "path", "p", strings.Replace(wd, user.HomeDir, "~", 1),
-		"Target path")
+		"the target path")
 
 	return cmd
 }

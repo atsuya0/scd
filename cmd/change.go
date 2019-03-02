@@ -41,7 +41,7 @@ func change(cmd *cobra.Command, args []string) error {
 func changeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "change",
-		Short: "Change the working directory with the second name",
+		Short: "Change the current working directory with the second name.",
 		Args:  cobra.MinimumNArgs(1),
 		RunE:  change,
 	}

@@ -47,7 +47,7 @@ func remove(_ *cobra.Command, args []string) error {
 func removeCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "remove",
-		Short: "remove the second name",
+		Short: "Remove the second name.",
 		Args:  cobra.MinimumNArgs(1),
 		RunE:  remove,
 	}

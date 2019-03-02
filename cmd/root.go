@@ -9,12 +9,12 @@ import (
 func rootCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "second",
-		Short: "Change the working directory with the second name.",
+		Short: "Change the current working directory with the second name.",
 	}
 
 	cmd.AddCommand(registerCmd())
 	cmd.AddCommand(changeCmd())
-	cmd.AddCommand(showCmd())
+	cmd.AddCommand(displayCmd())
 	cmd.AddCommand(listCmd())
 	cmd.AddCommand(removeCmd())
 	cmd.AddCommand(initializeCmd())
