@@ -127,28 +127,28 @@ func formatFile() error {
 	return nil
 }
 
-func loadList(flag int) (*os.File, List, error) {
+func getListAndFile(flag int) (List, *os.File, error) {
 	path, err := getListPath()
 	if err != nil {
-		return &os.File{}, List{}, err
+		return List{}, &os.File{}, err
 	}
 
 	if _, err := os.Stat(path); err != nil {
 		if err := formatFile(); err != nil {
-			return &os.File{}, List{}, err
+			return List{}, &os.File{}, err
 		}
 	}
 
 	file, err := os.OpenFile(path, flag, 0600)
 	if err != nil {
-		return &os.File{}, List{}, err
+		return List{}, &os.File{}, err
 	}
 
 	decoder := json.NewDecoder(file)
 	var list List
 	if err = decoder.Decode(&list); err != nil {
-		return &os.File{}, List{}, err
+		return List{}, &os.File{}, err
 	}
 
-	return file, list, nil
+	return list, file, nil
 }

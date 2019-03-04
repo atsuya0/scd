@@ -10,7 +10,7 @@ import (
 )
 
 func display(cmd *cobra.Command, args []string) error {
-	file, list, err := loadList(os.O_RDONLY)
+	list, file, err := getListAndFile(os.O_RDONLY)
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalf("%+v\n", err)

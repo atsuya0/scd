@@ -18,7 +18,7 @@ type RegisterOptions struct {
 }
 
 func register(options *RegisterOptions) error {
-	file, list, err := loadList(os.O_RDWR)
+	list, file, err := getListAndFile(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalf("%+v\n", err)
