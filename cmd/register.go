@@ -21,7 +21,7 @@ func register(options *RegisterOptions) error {
 	file, list, err := loadList(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
-			log.Fatalln(err)
+			log.Fatalf("%+v\n", err)
 		}
 	}()
 	if err != nil {
@@ -58,11 +58,11 @@ func registerCmd() *cobra.Command {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("%+v\n", err)
 	}
 	user, err := user.Current()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("%+v\n", err)
 	}
 
 	cmd.Flags().StringVarP(

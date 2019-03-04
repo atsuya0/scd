@@ -15,10 +15,10 @@ func TestList(t *testing.T) {
 
 	path, err := filepath.Abs("./testdata/test.json")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalf("%+v\n", err)
 	}
 	if err := os.Setenv("SECOND_LIST_PATH", path); err != nil {
-		log.Fatalln(err)
+		log.Fatalf("%+v\n", err)
 	}
 
 	for i, opt := range options {

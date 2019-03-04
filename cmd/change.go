@@ -15,7 +15,7 @@ func change(cmd *cobra.Command, args []string) error {
 	file, list, err := loadList(os.O_RDONLY)
 	defer func() {
 		if err = file.Close(); err != nil {
-			log.Fatalln(err)
+			log.Fatalf("%+v\n", err)
 		}
 	}()
 	if err != nil {

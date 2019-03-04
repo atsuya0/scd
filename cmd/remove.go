@@ -13,7 +13,7 @@ func remove(_ *cobra.Command, args []string) error {
 	file, list, err := loadList(os.O_RDWR)
 	defer func() {
 		if err = file.Close(); err != nil {
-			log.Fatalln(err)
+			log.Fatalf("%+v\n", err)
 		}
 	}()
 	if err != nil {
