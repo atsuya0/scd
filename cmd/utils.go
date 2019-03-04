@@ -26,7 +26,7 @@ func (l *List) match(name string) (int, string, error) {
 			return i, pair.Path, nil
 		}
 	}
-	err := fmt.Errorf("%s is invalid name.", name)
+	err := xerrors.New(name + " invalid name")
 
 	return 0, "", err
 }
@@ -34,11 +34,11 @@ func (l *List) match(name string) (int, string, error) {
 func (l *List) isDuplicate(options RegisterOptions) (err error) {
 	for _, pair := range l.Pairs {
 		if pair.Name == options.name {
-			err = fmt.Errorf("This name has already been registered.")
+			err = xerrors.New("This name has already been registered.")
 			return
 		}
 		if pair.Path == options.path {
-			err = fmt.Errorf("This path has already been registered.")
+			err = xerrors.New("This path has already been registered.")
 			return
 		}
 	}
@@ -50,7 +50,7 @@ func (l *List) del(i int) error {
 		l.Pairs = append(l.Pairs[:i:i], l.Pairs[i+1:]...)
 		return nil
 	}
-	return fmt.Errorf("out of range.")
+	return xerrors.New("out of range.")
 }
 
 func getEnvPath() (string, error) {
