@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+
+	"golang.org/x/xerrors"
 )
 
 type Pair struct {
@@ -95,14 +97,15 @@ func getListPath() (string, error) {
 	if path, err := getConfPath(); err == nil {
 		return path, nil
 	} else {
-		return "", err
+		return "", xerrors.
+			Errorf("Cannot get the path from the user infomation: %w", err)
 	}
 }
 
 func formatFile() error {
 	path, err := getListPath()
 	if err != nil {
-		return err
+		return xerrors.Errorf("Cannot get path of the list: %w", err)
 	}
 	file, err := os.Create(path)
 	if err != nil {
@@ -130,12 +133,12 @@ func formatFile() error {
 func getListAndFile(flag int) (List, *os.File, error) {
 	path, err := getListPath()
 	if err != nil {
-		return List{}, &os.File{}, err
+		return List{}, &os.File{}, xerrors.Errorf("Cannot get path of the list: %w", err)
 	}
 
 	if _, err := os.Stat(path); err != nil {
 		if err := formatFile(); err != nil {
-			return List{}, &os.File{}, err
+			return List{}, &os.File{}, xerrors.Errorf("Cannot format data file: %w", err)
 		}
 	}
 
