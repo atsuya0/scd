@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -20,10 +18,4 @@ func NewCmd() *cobra.Command {
 	cmd.AddCommand(initializeCmd())
 
 	return cmd
-}
-
-func Execute() error {
-	cmd := NewCmd()
-	cmd.SetOutput(os.Stdout)
-	return cmd.Execute()
 }
