@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -19,12 +18,12 @@ func change(cmd *cobra.Command, args []string) error {
 		}
 	}()
 	if err != nil {
-		return fmt.Errorf("change: %v", err)
+		return err
 	}
 
 	_, path, err := list.match(args[0])
 	if err != nil {
-		return fmt.Errorf("change: %v", err)
+		return err
 	}
 	cmd.Print(strings.Replace(path, "~", os.Getenv("HOME"), 1))
 	// if err := os.Chdir(path); err != nil {

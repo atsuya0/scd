@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"os/user"
@@ -25,21 +24,21 @@ func register(options *RegisterOptions) error {
 		}
 	}()
 	if err != nil {
-		return fmt.Errorf("register: %v", err)
+		return err
 	}
 
 	if err = list.isDuplicate(*options); err != nil {
-		return fmt.Errorf("register: %v", err)
+		return err
 	}
 
 	list.Pairs = append(list.Pairs, Pair{Name: options.name, Path: options.path})
 	jsonBytes, err := json.Marshal(list)
 	if err != nil {
-		return fmt.Errorf("register: %v", err)
+		return err
 	}
 	_, err = file.WriteAt(jsonBytes, 0)
 	if err != nil {
-		return fmt.Errorf("register: %v", err)
+		return err
 	}
 
 	return nil

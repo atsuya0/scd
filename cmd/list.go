@@ -23,13 +23,13 @@ func list(options *ListOptions, out io.Writer) error {
 		}
 	}()
 	if err != nil {
-		return fmt.Errorf("list: %v", err)
+		return err
 	}
 
 	if (options.name && options.path) || (!options.name && !options.path) {
 		bytes, err := json.MarshalIndent(list.Pairs, "", "  ")
 		if err != nil {
-			return fmt.Errorf("list: %v", err)
+			return err
 		}
 		fmt.Fprintln(out, string(bytes))
 	} else if options.name {

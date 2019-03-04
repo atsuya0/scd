@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
@@ -17,28 +16,28 @@ func remove(_ *cobra.Command, args []string) error {
 		}
 	}()
 	if err != nil {
-		return fmt.Errorf("remove: %v", err)
+		return err
 	}
 
 	if err = file.Truncate(0); err != nil {
-		return fmt.Errorf("remove: %v", err)
+		return err
 	}
 
 	num, _, err := list.match(args[0])
 	if err != nil {
-		return fmt.Errorf("remove: %v", err)
+		return err
 	}
 	if err := list.del(num); err != nil {
-		return fmt.Errorf("remove: %v", err)
+		return err
 	}
 
 	jsonBytes, err := json.Marshal(list)
 	if err != nil {
-		return fmt.Errorf("remove: %v", err)
+		return err
 	}
 	_, err = file.WriteAt(jsonBytes, 0)
 	if err != nil {
-		return fmt.Errorf("remove: %v", err)
+		return err
 	}
 
 	return nil

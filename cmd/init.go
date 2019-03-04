@@ -26,7 +26,7 @@ func initialize(_ *cobra.Command, _ []string) error {
 	}
 
 	if err := formatFile(); err != nil {
-		return fmt.Errorf("init: %v", err)
+		return err
 	}
 	fmt.Println("Processing was successful.")
 
