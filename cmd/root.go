@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func rootCmd() *cobra.Command {
+func newCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "second",
 		Short: "Change the current working directory with the second name.",
@@ -22,8 +22,8 @@ func rootCmd() *cobra.Command {
 	return cmd
 }
 
-func Execute() {
-	cmd := rootCmd()
+func Execute() error {
+	cmd := newCmd()
 	cmd.SetOutput(os.Stdout)
-	cmd.Execute()
+	return cmd.Execute()
 }
