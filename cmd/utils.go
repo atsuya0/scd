@@ -2,13 +2,12 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"os/user"
 	"path/filepath"
-
-	"golang.org/x/xerrors"
 )
 
 type Pair struct {
@@ -26,7 +25,7 @@ func (l *List) match(name string) (int, string, error) {
 			return i, pair.Path, nil
 		}
 	}
-	err := xerrors.New(name + " invalid name")
+	err := errors.New(name + " invalid name")
 
 	return 0, "", err
 }
@@ -34,11 +33,11 @@ func (l *List) match(name string) (int, string, error) {
 func (l *List) isDuplicate(options RegisterOptions) (err error) {
 	for _, pair := range l.Pairs {
 		if pair.Name == options.name {
-			err = xerrors.New("This name has already been registered.")
+			err = errors.New("This name has already been registered.")
 			return
 		}
 		if pair.Path == options.path {
-			err = xerrors.New("This path has already been registered.")
+			err = errors.New("This path has already been registered.")
 			return
 		}
 	}
@@ -50,7 +49,7 @@ func (l *List) del(i int) error {
 		l.Pairs = append(l.Pairs[:i:i], l.Pairs[i+1:]...)
 		return nil
 	}
-	return xerrors.New("out of range.")
+	return errors.New("out of range.")
 }
 
 func getEnvPath() (string, error) {
@@ -97,7 +96,7 @@ func getListPath() (string, error) {
 	if path, err := getConfPath(); err == nil {
 		return path, nil
 	} else {
-		return "", xerrors.
+		return "", fmt.
 			Errorf("Cannot get the path from the user infomation: %w", err)
 	}
 }
@@ -105,7 +104,7 @@ func getListPath() (string, error) {
 func formatFile() error {
 	path, err := getListPath()
 	if err != nil {
-		return xerrors.Errorf("Cannot get path of the list: %w", err)
+		return fmt.Errorf("Cannot get path of the list: %w", err)
 	}
 	file, err := os.Create(path)
 	if err != nil {
@@ -133,12 +132,12 @@ func formatFile() error {
 func getListAndFile(flag int) (List, *os.File, error) {
 	path, err := getListPath()
 	if err != nil {
-		return List{}, &os.File{}, xerrors.Errorf("Cannot get path of the list: %w", err)
+		return List{}, &os.File{}, fmt.Errorf("Cannot get path of the list: %w", err)
 	}
 
 	if _, err := os.Stat(path); err != nil {
 		if err := formatFile(); err != nil {
-			return List{}, &os.File{}, xerrors.Errorf("Cannot format data file: %w", err)
+			return List{}, &os.File{}, fmt.Errorf("Cannot format data file: %w", err)
 		}
 	}
 
