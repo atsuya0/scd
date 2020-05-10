@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/user"
 	"path/filepath"
 )
 
@@ -31,11 +30,11 @@ func getXdgPath() (string, error) {
 }
 
 func getConfPath() (string, error) {
-	user, err := user.Current()
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	path := filepath.Join(user.HomeDir, ".config", "second")
+	path := filepath.Join(homeDir, ".config", "second")
 	if err := os.MkdirAll(path, 0700); err != nil {
 		return "", err
 	}
