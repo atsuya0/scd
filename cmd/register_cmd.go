@@ -18,14 +18,14 @@ type RegisterOptions struct {
 
 func register(options *RegisterOptions) error {
 	list, file, err := getListAndFile(os.O_RDWR)
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalf("%+v\n", err)
-		}
-	}()
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	if err = list.isDuplicate(*options); err != nil {
 		return err
@@ -57,11 +57,11 @@ func registerCmd() *cobra.Command {
 
 	wd, err := os.Getwd()
 	if err != nil {
-		log.Fatalf("%+v\n", err)
+		log.Fatalln(err)
 	}
 	user, err := user.Current()
 	if err != nil {
-		log.Fatalf("%+v\n", err)
+		log.Fatalln(err)
 	}
 
 	cmd.Flags().StringVarP(

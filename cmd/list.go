@@ -1,63 +1,45 @@
 package cmd
 
-import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"log"
-	"os"
+import "errors"
 
-	"github.com/spf13/cobra"
-)
-
-type ListOptions struct {
-	name bool
-	path bool
+type Pair struct {
+	Name string `json:"name"`
+	Path string `json:"path"`
 }
 
-func list(options *ListOptions, out io.Writer) error {
-	list, file, err := getListAndFile(os.O_RDONLY)
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalf("%+v\n", err)
-		}
-	}()
-	if err != nil {
-		return err
-	}
-
-	if (options.name && options.path) || (!options.name && !options.path) {
-		bytes, err := json.MarshalIndent(list.Pairs, "", "  ")
-		if err != nil {
-			return err
-		}
-		fmt.Fprintln(out, string(bytes))
-	} else if options.name {
-		for _, pair := range list.Pairs {
-			fmt.Fprintln(out, pair.Name)
-		}
-	} else if options.path {
-		for _, pair := range list.Pairs {
-			fmt.Fprintln(out, pair.Path)
-		}
-	}
-
-	return nil
+type List struct {
+	Pairs []Pair `json:"list"`
 }
 
-func listCmd() *cobra.Command {
-	options := &ListOptions{}
-
-	var cmd = &cobra.Command{
-		Use:   "list",
-		Short: "List the second name and the target path in JSON format.",
-		RunE: func(_ *cobra.Command, _ []string) error {
-			return list(options, os.Stdout)
-		},
+func (l *List) match(name string) (int, string, error) {
+	for i, pair := range l.Pairs {
+		if pair.Name == name {
+			return i, pair.Path, nil
+		}
 	}
+	err := errors.New(name + " invalid name")
 
-	cmd.Flags().BoolVarP(&options.name, "name", "n", false, "the second name")
-	cmd.Flags().BoolVarP(&options.path, "path", "p", false, "the target path")
+	return 0, "", err
+}
 
-	return cmd
+func (l *List) isDuplicate(options RegisterOptions) (err error) {
+	for _, pair := range l.Pairs {
+		if pair.Name == options.name {
+			err = errors.New("This name has already been registered.")
+			return
+		}
+		if pair.Path == options.path {
+			err = errors.New("This path has already been registered.")
+			return
+		}
+	}
+	return
+}
+
+func (l *List) del(i int) error {
+	if 0 <= i && i < len(l.Pairs) {
+		l.Pairs = append(l.Pairs[:i:i], l.Pairs[i+1:]...)
+		return nil
+	}
+	return errors.New("out of range.")
 }

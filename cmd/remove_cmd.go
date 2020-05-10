@@ -10,14 +10,14 @@ import (
 
 func remove(_ *cobra.Command, args []string) error {
 	list, file, err := getListAndFile(os.O_RDWR)
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalf("%+v\n", err)
-		}
-	}()
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	if err = file.Truncate(0); err != nil {
 		return err

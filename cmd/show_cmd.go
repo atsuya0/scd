@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"log"
 	"os"
 	"strings"
@@ -9,21 +10,28 @@ import (
 )
 
 func display(cmd *cobra.Command, args []string) error {
+	if len(args) == 0 {
+		return errors.New("At least one argument is required.")
+	}
 	list, file, err := getListAndFile(os.O_RDONLY)
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalf("%+v\n", err)
-		}
-	}()
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	_, path, err := list.match(args[0])
 	if err != nil {
 		return err
 	}
-	cmd.Println(strings.Replace(path, "~", os.Getenv("HOME"), 1))
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	cmd.Println(strings.Replace(path, "~", home, 1))
 
 	return nil
 }

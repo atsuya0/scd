@@ -2,61 +2,17 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
-	"os/user"
 	"path/filepath"
-
-	"golang.org/x/xerrors"
 )
-
-type Pair struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
-}
-
-type List struct {
-	Pairs []Pair `json:"list"`
-}
-
-func (l *List) match(name string) (int, string, error) {
-	for i, pair := range l.Pairs {
-		if pair.Name == name {
-			return i, pair.Path, nil
-		}
-	}
-	err := xerrors.New(name + " invalid name")
-
-	return 0, "", err
-}
-
-func (l *List) isDuplicate(options RegisterOptions) (err error) {
-	for _, pair := range l.Pairs {
-		if pair.Name == options.name {
-			err = xerrors.New("This name has already been registered.")
-			return
-		}
-		if pair.Path == options.path {
-			err = xerrors.New("This path has already been registered.")
-			return
-		}
-	}
-	return
-}
-
-func (l *List) del(i int) error {
-	if 0 <= i && i < len(l.Pairs) {
-		l.Pairs = append(l.Pairs[:i:i], l.Pairs[i+1:]...)
-		return nil
-	}
-	return xerrors.New("out of range.")
-}
 
 func getEnvPath() (string, error) {
 	path := os.Getenv("SECOND_LIST_PATH")
 	if path == "" {
-		return "", fmt.Errorf("Cannot get path what use defined env")
+		return "", errors.New("Cannot get path what use defined env")
 	}
 	return path, nil
 }
@@ -64,7 +20,7 @@ func getEnvPath() (string, error) {
 func getXdgPath() (string, error) {
 	conf := os.Getenv("XDG_CONFIG_HOME")
 	if conf == "" {
-		return "", fmt.Errorf("Cannot get path what use XDG_CONFIG_HOME")
+		return "", errors.New("Cannot get path what use XDG_CONFIG_HOME")
 	}
 	path := filepath.Join(conf, "second")
 	if err := os.MkdirAll(path, 0700); err != nil {
@@ -75,11 +31,11 @@ func getXdgPath() (string, error) {
 }
 
 func getConfPath() (string, error) {
-	user, err := user.Current()
+	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-	path := filepath.Join(user.HomeDir, ".config", "second")
+	path := filepath.Join(homeDir, ".config", "second")
 	if err := os.MkdirAll(path, 0700); err != nil {
 		return "", err
 	}
@@ -94,37 +50,36 @@ func getListPath() (string, error) {
 	if path, err := getXdgPath(); err == nil {
 		return path, nil
 	}
-	if path, err := getConfPath(); err == nil {
+	if path, err := getConfPath(); err != nil {
 		return path, nil
 	} else {
-		return "", xerrors.
-			Errorf("Cannot get the path from the user infomation: %w", err)
+		return "", fmt.Errorf("Cannot get the file path to save the data: %w", err)
 	}
 }
 
 func formatFile() error {
 	path, err := getListPath()
 	if err != nil {
-		return xerrors.Errorf("Cannot get path of the list: %w", err)
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 	file, err := os.Create(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 	defer func() {
 		if err = file.Close(); err != nil {
-			log.Fatalf("%+v\n", err)
+			log.Fatalln(err)
 		}
 	}()
 
 	jsonBytes, err := json.Marshal(List{})
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 
 	_, err = file.Write(jsonBytes)
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 
 	return nil
@@ -133,12 +88,12 @@ func formatFile() error {
 func getListAndFile(flag int) (List, *os.File, error) {
 	path, err := getListPath()
 	if err != nil {
-		return List{}, &os.File{}, xerrors.Errorf("Cannot get path of the list: %w", err)
+		return List{}, &os.File{}, err
 	}
 
 	if _, err := os.Stat(path); err != nil {
 		if err := formatFile(); err != nil {
-			return List{}, &os.File{}, xerrors.Errorf("Cannot format data file: %w", err)
+			return List{}, &os.File{}, err
 		}
 	}
 
