@@ -112,7 +112,7 @@ func formatFile() error {
 	}
 	defer func() {
 		if err = file.Close(); err != nil {
-			log.Fatalf("%v\n", err)
+			log.Fatalln(err)
 		}
 	}()
 
