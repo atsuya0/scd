@@ -27,7 +27,11 @@ func display(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	cmd.Println(strings.Replace(path, "~", os.Getenv("HOME"), 1))
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	cmd.Println(strings.Replace(path, "~", home, 1))
 
 	return nil
 }
