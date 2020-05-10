@@ -17,14 +17,14 @@ type ListOptions struct {
 
 func list(options *ListOptions, out io.Writer) error {
 	list, file, err := getListAndFile(os.O_RDONLY)
+	if err != nil {
+		return err
+	}
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalf("%+v\n", err)
 		}
 	}()
-	if err != nil {
-		return err
-	}
 
 	if (options.name && options.path) || (!options.name && !options.path) {
 		bytes, err := json.MarshalIndent(list.Pairs, "", "  ")

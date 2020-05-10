@@ -12,14 +12,14 @@ import (
 
 func change(cmd *cobra.Command, args []string) error {
 	list, file, err := getListAndFile(os.O_RDONLY)
+	if err != nil {
+		return err
+	}
 	defer func() {
 		if err = file.Close(); err != nil {
 			log.Fatalf("%+v\n", err)
 		}
 	}()
-	if err != nil {
-		return err
-	}
 
 	_, path, err := list.match(args[0])
 	if err != nil {
