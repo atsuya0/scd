@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -15,10 +14,10 @@ func TestList(t *testing.T) {
 
 	path, err := filepath.Abs("./testdata/test.json")
 	if err != nil {
-		log.Fatalf("%+v\n", err)
+		t.Error(err)
 	}
 	if err := os.Setenv("SECOND_LIST_PATH", path); err != nil {
-		log.Fatalf("%+v\n", err)
+		t.Error(err)
 	}
 
 	for i, opt := range options {
