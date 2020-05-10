@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func display(cmd *cobra.Command, args []string) error {
+func show(cmd *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return errors.New("At least one argument is required.")
 	}
@@ -36,12 +36,12 @@ func display(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func displayCmd() *cobra.Command {
+func showCmd() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "display",
-		Short: "Display the target path by the second name.",
+		Use:   "show",
+		Short: "Show the target path by the second name.",
 		Args:  cobra.MinimumNArgs(1),
-		RunE:  display,
+		RunE:  show,
 	}
 
 	return cmd
