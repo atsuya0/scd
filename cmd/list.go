@@ -22,7 +22,7 @@ func list(options *ListOptions, out io.Writer) error {
 	}
 	defer func() {
 		if err = file.Close(); err != nil {
-			log.Fatalf("%+v\n", err)
+			log.Fatalf("%v\n", err)
 		}
 	}()
 
