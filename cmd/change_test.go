@@ -28,7 +28,7 @@ func TestChange(t *testing.T) {
 	}
 
 	var buffer *bytes.Buffer
-	cmd := rootCmd()
+	cmd := NewCmd()
 
 	for _, p := range patterns {
 		buffer = new(bytes.Buffer)
