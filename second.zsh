@@ -8,7 +8,7 @@ function _second() {
   function sub_commands() {
     _values 'Commands' \
       'change' \
-      'display' \
+      'show' \
       'register' \
       'list' \
       'remove' \
@@ -33,7 +33,7 @@ function _second() {
             'Second names' \
             $(second list --name)
         ;;
-        (display)
+        (show)
           _values \
             'Second names' \
             $(second list --name)
