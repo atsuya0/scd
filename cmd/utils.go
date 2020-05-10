@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -11,7 +12,7 @@ import (
 func getEnvPath() (string, error) {
 	path := os.Getenv("SECOND_LIST_PATH")
 	if path == "" {
-		return "", fmt.Errorf("Cannot get path what use defined env")
+		return "", errors.New("Cannot get path what use defined env")
 	}
 	return path, nil
 }
@@ -19,7 +20,7 @@ func getEnvPath() (string, error) {
 func getXdgPath() (string, error) {
 	conf := os.Getenv("XDG_CONFIG_HOME")
 	if conf == "" {
-		return "", fmt.Errorf("Cannot get path what use XDG_CONFIG_HOME")
+		return "", errors.New("Cannot get path what use XDG_CONFIG_HOME")
 	}
 	path := filepath.Join(conf, "second")
 	if err := os.MkdirAll(path, 0700); err != nil {
@@ -49,22 +50,21 @@ func getListPath() (string, error) {
 	if path, err := getXdgPath(); err == nil {
 		return path, nil
 	}
-	if path, err := getConfPath(); err == nil {
+	if path, err := getConfPath(); err != nil {
 		return path, nil
 	} else {
-		return "", fmt.
-			Errorf("Cannot get the path from the user infomation: %w", err)
+		return "", fmt.Errorf("Cannot get the file path to save the data: %w", err)
 	}
 }
 
 func formatFile() error {
 	path, err := getListPath()
 	if err != nil {
-		return fmt.Errorf("Cannot get path of the list: %w", err)
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 	file, err := os.Create(path)
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 	defer func() {
 		if err = file.Close(); err != nil {
@@ -74,12 +74,12 @@ func formatFile() error {
 
 	jsonBytes, err := json.Marshal(List{})
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 
 	_, err = file.Write(jsonBytes)
 	if err != nil {
-		return err
+		return fmt.Errorf("Cannot format the data file: %w", err)
 	}
 
 	return nil
@@ -88,12 +88,12 @@ func formatFile() error {
 func getListAndFile(flag int) (List, *os.File, error) {
 	path, err := getListPath()
 	if err != nil {
-		return List{}, &os.File{}, fmt.Errorf("Cannot get path of the list: %w", err)
+		return List{}, &os.File{}, err
 	}
 
 	if _, err := os.Stat(path); err != nil {
 		if err := formatFile(); err != nil {
-			return List{}, &os.File{}, fmt.Errorf("Cannot format data file: %w", err)
+			return List{}, &os.File{}, err
 		}
 	}
 
