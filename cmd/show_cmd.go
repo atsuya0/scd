@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"errors"
-	"log"
 	"os"
 	"strings"
 
@@ -10,20 +8,13 @@ import (
 )
 
 func show(cmd *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		return errors.New("At least one argument is required.")
-	}
-	list, file, err := getListAndFile(os.O_RDONLY)
+	pairs, err := getPairs()
 	if err != nil {
 		return err
 	}
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
+	second := newSecond(pairs)
 
-	_, path, err := list.match(args[0])
+	_, path, err := second.match(args[0])
 	if err != nil {
 		return err
 	}

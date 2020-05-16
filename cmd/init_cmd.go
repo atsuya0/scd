@@ -3,6 +3,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -25,9 +26,23 @@ func initialize(_ *cobra.Command, _ []string) error {
 		return nil
 	}
 
-	if err := formatFile(); err != nil {
+	path, err := getSecondPath()
+	if err != nil {
 		return err
 	}
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if err = file.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+	if _, err := file.WriteString("[]"); err != nil {
+		return err
+	}
+
 	fmt.Println("Processing was successful.")
 
 	return nil

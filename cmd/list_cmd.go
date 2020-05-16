@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -16,28 +16,23 @@ type ListOptions struct {
 }
 
 func list(options *ListOptions, out io.Writer) error {
-	list, file, err := getListAndFile(os.O_RDONLY)
+	pairs, err := getPairs()
 	if err != nil {
 		return err
 	}
-	defer func() {
-		if err = file.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
 
 	if (options.name && options.path) || (!options.name && !options.path) {
-		bytes, err := json.MarshalIndent(list.Pairs, "", "  ")
+		bytes, err := json.MarshalIndent(pairs, "", strings.Repeat(" ", 2))
 		if err != nil {
 			return err
 		}
 		fmt.Fprintln(out, string(bytes))
 	} else if options.name {
-		for _, pair := range list.Pairs {
+		for _, pair := range pairs {
 			fmt.Fprintln(out, pair.Name)
 		}
 	} else if options.path {
-		for _, pair := range list.Pairs {
+		for _, pair := range pairs {
 			fmt.Fprintln(out, pair.Path)
 		}
 	}

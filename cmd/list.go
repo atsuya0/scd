@@ -1,18 +1,24 @@
 package cmd
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+	"os"
+	"strings"
+)
+
+type second struct {
+	file  *os.File
+	pairs []Pair
+}
 
 type Pair struct {
 	Name string `json:"name"`
 	Path string `json:"path"`
 }
 
-type List struct {
-	Pairs []Pair `json:"list"`
-}
-
-func (l *List) match(name string) (int, string, error) {
-	for i, pair := range l.Pairs {
+func (s *second) match(name string) (int, string, error) {
+	for i, pair := range s.pairs {
 		if pair.Name == name {
 			return i, pair.Path, nil
 		}
@@ -22,8 +28,8 @@ func (l *List) match(name string) (int, string, error) {
 	return 0, "", err
 }
 
-func (l *List) isDuplicate(options RegisterOptions) (err error) {
-	for _, pair := range l.Pairs {
+func (s *second) isDuplicate(options RegisterOptions) (err error) {
+	for _, pair := range s.pairs {
 		if pair.Name == options.name {
 			err = errors.New("This name has already been registered.")
 			return
@@ -36,10 +42,31 @@ func (l *List) isDuplicate(options RegisterOptions) (err error) {
 	return
 }
 
-func (l *List) del(i int) error {
-	if 0 <= i && i < len(l.Pairs) {
-		l.Pairs = append(l.Pairs[:i:i], l.Pairs[i+1:]...)
+func (s *second) del(i int) error {
+	if 0 <= i && i < len(s.pairs) {
+		s.pairs = append(s.pairs[:i:i], s.pairs[i+1:]...)
 		return nil
 	}
 	return errors.New("out of range.")
+}
+
+func (s *second) update() error {
+	json, err := json.MarshalIndent(s.pairs, "", strings.Repeat(" ", 2))
+	if err != nil {
+		return err
+	}
+	if err := s.file.Truncate(0); err != nil {
+		return err
+	}
+	if _, err = s.file.WriteAt(json, 0); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Get an undeclared name error.
+// second := second {pairs: pairs}
+func newSecond(pairs []Pair) second {
+	return second{pairs: pairs}
 }
