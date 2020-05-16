@@ -21,7 +21,7 @@ func TestList(t *testing.T) {
 	}
 
 	for i, opt := range options {
-		buffer := &bytes.Buffer{}
+		buffer := bytes.NewBuffer(nil)
 		list(&opt, buffer)
 
 		result := strings.Replace(buffer.String(), "\n", "", -1)

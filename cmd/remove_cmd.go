@@ -1,42 +1,30 @@
 package cmd
 
 import (
-	"encoding/json"
 	"log"
-	"os"
 
 	"github.com/spf13/cobra"
 )
 
 func remove(_ *cobra.Command, args []string) error {
-	list, file, err := getListAndFile(os.O_RDWR)
-	if err != nil {
-		return err
-	}
+	second, err := getSecond()
 	defer func() {
-		if err = file.Close(); err != nil {
+		if err = second.file.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
-
-	if err = file.Truncate(0); err != nil {
-		return err
-	}
-
-	num, _, err := list.match(args[0])
 	if err != nil {
 		return err
 	}
-	if err := list.del(num); err != nil {
-		return err
-	}
 
-	jsonBytes, err := json.Marshal(list)
+	num, _, err := second.match(args[0])
 	if err != nil {
 		return err
 	}
-	_, err = file.WriteAt(jsonBytes, 0)
-	if err != nil {
+	if err := second.del(num); err != nil {
+		return err
+	}
+	if err = second.update(); err != nil {
 		return err
 	}
 

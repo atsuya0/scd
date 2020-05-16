@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -43,7 +44,7 @@ func getConfPath() (string, error) {
 	return filepath.Join(path, "list.json"), nil
 }
 
-func getListPath() (string, error) {
+func getSecondPath() (string, error) {
 	if path, err := getEnvPath(); err == nil {
 		return path, nil
 	}
@@ -57,56 +58,66 @@ func getListPath() (string, error) {
 	}
 }
 
-func formatFile() error {
-	path, err := getListPath()
+func getSecond() (second, error) {
+	path, err := getSecondPath()
 	if err != nil {
-		return fmt.Errorf("Cannot format the data file: %w", err)
+		return second{}, err
 	}
-	file, err := os.Create(path)
+
+	var file *os.File
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		file, err = os.Create(path)
+		return second{file: file, pairs: make([]Pair, 0)}, err
+	} else if err != nil {
+		return second{}, err
+	} else {
+		file, err = os.OpenFile(path, os.O_RDWR, 0600)
+		if err != nil {
+			return second{}, err
+		}
+	}
+
+	buffer := bytes.NewBuffer(nil)
+	if _, err := buffer.ReadFrom(file); err != nil {
+		return second{}, err
+	}
+	var pairs []Pair
+	if err = json.Unmarshal(buffer.Bytes(), &pairs); err != nil {
+		return second{}, err
+	}
+
+	return second{file: file, pairs: pairs}, nil
+}
+
+func getPairs() ([]Pair, error) {
+	path, err := getSecondPath()
 	if err != nil {
-		return fmt.Errorf("Cannot format the data file: %w", err)
+		return make([]Pair, 0), err
+	}
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return make([]Pair, 0), nil
+	} else if err != nil {
+		return make([]Pair, 0), err
+	}
+	file, err := os.Open(path)
+	if err != nil {
+		return make([]Pair, 0), err
 	}
 	defer func() {
-		if err = file.Close(); err != nil {
+		if err := file.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
 
-	jsonBytes, err := json.Marshal(List{})
-	if err != nil {
-		return fmt.Errorf("Cannot format the data file: %w", err)
+	buffer := bytes.NewBuffer(nil)
+	if _, err := buffer.ReadFrom(file); err != nil {
+		return make([]Pair, 0), err
+	}
+	var pairs []Pair
+	if err = json.Unmarshal(buffer.Bytes(), &pairs); err != nil {
+		return make([]Pair, 0), err
 	}
 
-	_, err = file.Write(jsonBytes)
-	if err != nil {
-		return fmt.Errorf("Cannot format the data file: %w", err)
-	}
-
-	return nil
-}
-
-func getListAndFile(flag int) (List, *os.File, error) {
-	path, err := getListPath()
-	if err != nil {
-		return List{}, &os.File{}, err
-	}
-
-	if _, err := os.Stat(path); err != nil {
-		if err := formatFile(); err != nil {
-			return List{}, &os.File{}, err
-		}
-	}
-
-	file, err := os.OpenFile(path, flag, 0600)
-	if err != nil {
-		return List{}, &os.File{}, err
-	}
-
-	decoder := json.NewDecoder(file)
-	var list List
-	if err = decoder.Decode(&list); err != nil {
-		return List{}, &os.File{}, err
-	}
-
-	return list, file, nil
+	return pairs, nil
 }

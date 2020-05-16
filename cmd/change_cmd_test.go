@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,21 +25,19 @@ func TestChange(t *testing.T) {
 		t.Error(err)
 	}
 
-	var buffer *bytes.Buffer
 	cmd := NewCmd()
 
 	for _, p := range patterns {
-		buffer = new(bytes.Buffer)
+		buffer := bytes.NewBuffer(nil)
 		cmd.SetOutput(buffer)
 
 		args := strings.Split(p.cmd, " ")
-		fmt.Printf("args: %+v\n", args)
 		cmd.SetArgs(args[1:])
 		cmd.Execute()
 
 		result := buffer.String()
 		if p.output != result {
-			t.Errorf("%s is not %s", result, p.output)
+			t.Errorf("'%s' is not '%s'", result, p.output)
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"encoding/json"
 	"log"
 	"os"
 	"os/user"
@@ -17,27 +16,22 @@ type RegisterOptions struct {
 }
 
 func register(options *RegisterOptions) error {
-	list, file, err := getListAndFile(os.O_RDWR)
-	if err != nil {
-		return err
-	}
+	second, err := getSecond()
 	defer func() {
-		if err = file.Close(); err != nil {
+		if err = second.file.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
-
-	if err = list.isDuplicate(*options); err != nil {
-		return err
-	}
-
-	list.Pairs = append(list.Pairs, Pair{Name: options.name, Path: options.path})
-	jsonBytes, err := json.Marshal(list)
 	if err != nil {
 		return err
 	}
-	_, err = file.WriteAt(jsonBytes, 0)
-	if err != nil {
+
+	if err = second.isDuplicate(*options); err != nil {
+		return err
+	}
+
+	second.pairs = append(second.pairs, Pair{Name: options.name, Path: options.path})
+	if err = second.update(); err != nil {
 		return err
 	}
 

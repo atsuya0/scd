@@ -1,12 +1,10 @@
-{
-  "list": [
-    {
-      "name": "bin",
-      "path": "/usr/bin"
-    },
-    {
-      "name": "xd",
-      "path": "/etc/X11/xorg.conf.d"
-    }
-  ]
-}
+[
+  {
+    "name": "bin",
+    "path": "/usr/bin"
+  },
+  {
+    "name": "xd",
+    "path": "/etc/X11/xorg.conf.d"
+  }
+]
