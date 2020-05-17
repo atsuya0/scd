@@ -26,12 +26,12 @@ function _second() {
         (register)
           _arguments \
             '(-n --name)'{-n,--name}'[Second name]' \
-            '(-p --path)'{-p,--path}'[Target path]'
+            '(-p --path)'{-p,--path}'[Target path]' \
+            '(-s --sub)'{-s,--sub}'[sub directory]'
         ;;
         (change)
-          _values \
-            'Second names' \
-            $(second list --name)
+          _arguments \
+            '(-s --sub)'{-s,--sub}'[sub directory]'
         ;;
         (show)
           _values \
@@ -44,9 +44,8 @@ function _second() {
             '(-p --path)'{-p,--path}'[Target path]'
         ;;
         (remove)
-          _values \
-            'Second names' \
-            $(second list --name)
+          _arguments \
+            '(-s --sub)'{-s,--sub}'[sub directory]'
         ;;
         (init)
         ;;
