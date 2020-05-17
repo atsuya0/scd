@@ -43,7 +43,7 @@ func remove(args []string, sub bool) error {
 	if err != nil {
 		return err
 	}
-	if err := second.del(num); err != nil {
+	if err := second.remove(num); err != nil {
 		return err
 	}
 	if err = second.flush(); err != nil {

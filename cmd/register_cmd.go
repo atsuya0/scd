@@ -28,7 +28,7 @@ func register(options *RegisterOptions) error {
 	}
 
 	if options.sub {
-		err := second.addCurrentPath()
+		err := second.addSubDir()
 		if err != nil {
 			return err
 		}

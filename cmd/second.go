@@ -45,7 +45,7 @@ func (s *second) isDuplicate(options RegisterOptions) (err error) {
 	return
 }
 
-func (s *second) del(i int) error {
+func (s *second) remove(i int) error {
 	if 0 <= i && i < len(s.roots) {
 		s.roots = append(s.roots[:i:i], s.roots[i+1:]...)
 		return nil
@@ -138,7 +138,7 @@ func (s *second) getRoot() (int, Root, error) {
 	return -1, Root{}, errors.New("This path is outside the scope.")
 }
 
-func (s *second) addCurrentPath() error {
+func (s *second) addSubDir() error {
 	wd, err := os.Getwd()
 	if err != nil {
 		return err
