@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func remove(_ *cobra.Command, args []string) error {
+func remove(args []string, sub bool) error {
 	second, err := getSecond()
 	defer func() {
 		if err = second.file.Close(); err != nil {
@@ -15,6 +15,16 @@ func remove(_ *cobra.Command, args []string) error {
 	}()
 	if err != nil {
 		return err
+	}
+
+	if sub {
+		if err := second.removeSubDir(); err != nil {
+			return err
+		}
+		if err = second.flush(); err != nil {
+			return err
+		}
+		return nil
 	}
 
 	var name string
@@ -44,12 +54,15 @@ func remove(_ *cobra.Command, args []string) error {
 }
 
 func removeCmd() *cobra.Command {
+	var sub bool
 	var cmd = &cobra.Command{
 		Use:   "remove",
 		Short: "Remove the second name.",
-		Args:  cobra.MinimumNArgs(1),
-		RunE:  remove,
+		RunE: func(_ *cobra.Command, args []string) error {
+			return remove(args, sub)
+		},
 	}
+	cmd.Flags().BoolVarP(&sub, "sub", "s", false, "sub directory")
 
 	return cmd
 }
