@@ -83,6 +83,38 @@ func (s *second) choose() (string, error) {
 	return "", nil
 }
 
+func (s *second) chooseSubDir() (string, error) {
+	root, err := s.getRoot()
+	if err != nil {
+		return "", err
+	}
+	pathChooser, err := chooser.NewChooser(root.Sub)
+	if err != nil {
+		return "", err
+	}
+	if dirs := pathChooser.Run(); len(dirs) != 0 {
+		return dirs[0], nil
+	}
+	return "", nil
+}
+
+func (s *second) getRoot() (Root, error) {
+	wd, err := os.Getwd()
+	if err != nil {
+		return Root{}, err
+	}
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return Root{}, err
+	}
+	for _, root := range s.roots {
+		if strings.HasPrefix(wd, strings.Replace(root.Path, "~", homeDir, 1)) {
+			return root, nil
+		}
+	}
+	return Root{}, errors.New("This path is outside the scope.")
+}
+
 func (s *second) addCurrentPath() error {
 	wd, err := os.Getwd()
 	if err != nil {

@@ -1,20 +1,29 @@
 package cmd
 
 import (
-	"os"
-	"strings"
 
 	// "syscall"
 
 	"github.com/spf13/cobra"
 )
 
-func change(cmd *cobra.Command, args []string) error {
+func change(cmd *cobra.Command, args []string, sub bool) error {
 	roots, err := getRoots()
 	if err != nil {
 		return err
 	}
 	second := newSecond(roots)
+
+	if sub {
+		path, err := second.chooseSubDir()
+		if err != nil {
+			return err
+		} else if path == "" {
+			return nil
+		}
+		cmd.Print(path)
+		return nil
+	}
 
 	var name string
 	if len(args) != 0 {
@@ -32,11 +41,7 @@ func change(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
-	cmd.Print(strings.Replace(path, "~", home, 1))
+	cmd.Print(path)
 	// if err := os.Chdir(path); err != nil {
 	// 	return err
 	// }
@@ -49,11 +54,16 @@ func change(cmd *cobra.Command, args []string) error {
 }
 
 func changeCmd() *cobra.Command {
+	var sub bool
 	var cmd = &cobra.Command{
 		Use:   "change",
 		Short: "Change the current working directory with the second name.",
-		RunE:  change,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return change(cmd, args, sub)
+		},
 	}
+
+	cmd.Flags().BoolVarP(&sub, "sub", "s", false, "sub directory")
 
 	return cmd
 }
