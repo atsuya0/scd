@@ -17,7 +17,19 @@ func remove(_ *cobra.Command, args []string) error {
 		return err
 	}
 
-	num, _, err := second.match(args[0])
+	var name string
+	if len(args) != 0 {
+		name = args[0]
+	} else {
+		name, err = second.choose()
+		if err != nil {
+			return err
+		} else if name == "" {
+			return nil
+		}
+	}
+
+	num, _, err := second.match(name)
 	if err != nil {
 		return err
 	}

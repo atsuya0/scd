@@ -14,7 +14,19 @@ func show(cmd *cobra.Command, args []string) error {
 	}
 	second := newSecond(pairs)
 
-	_, path, err := second.match(args[0])
+	var name string
+	if len(args) != 0 {
+		name = args[0]
+	} else {
+		name, err = second.choose()
+		if err != nil {
+			return err
+		} else if name == "" {
+			return nil
+		}
+	}
+
+	_, path, err := second.match(name)
 	if err != nil {
 		return err
 	}
