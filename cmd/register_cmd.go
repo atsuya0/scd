@@ -13,6 +13,7 @@ import (
 type RegisterOptions struct {
 	name string
 	path string
+	sub  bool
 }
 
 func register(options *RegisterOptions) error {
@@ -26,11 +27,17 @@ func register(options *RegisterOptions) error {
 		return err
 	}
 
-	if err = second.isDuplicate(*options); err != nil {
-		return err
+	if options.sub {
+		err := second.addCurrentPath()
+		if err != nil {
+			return err
+		}
+	} else {
+		if err = second.isDuplicate(*options); err != nil {
+			return err
+		}
+		second.roots = append(second.roots, Root{Name: options.name, Path: options.path})
 	}
-
-	second.roots = append(second.roots, Root{Name: options.name, Path: options.path})
 	if err = second.flush(); err != nil {
 		return err
 	}
@@ -63,6 +70,8 @@ func registerCmd() *cobra.Command {
 	cmd.Flags().StringVarP(
 		&options.path, "path", "p", strings.Replace(wd, user.HomeDir, "~", 1),
 		"the target path")
+	cmd.Flags().BoolVarP(
+		&options.sub, "sub", "s", false, "sub directory")
 
 	return cmd
 }

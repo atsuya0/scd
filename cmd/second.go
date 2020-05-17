@@ -83,6 +83,26 @@ func (s *second) choose() (string, error) {
 	return "", nil
 }
 
+func (s *second) addCurrentPath() error {
+	wd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	for i, root := range s.roots {
+		if strings.HasPrefix(wd, strings.Replace(root.Path, "~", homeDir, 1)) {
+			s.roots = append(s.roots[:i:i], s.roots[i+1:]...)
+			root.Sub = append(root.Sub, wd)
+			s.roots = append(s.roots, root)
+			return nil
+		}
+	}
+	return errors.New("This path is outside the scope.")
+}
+
 // Get an undeclared name error.
 // second := second {roots: roots}
 func newSecond(roots []Root) second {
