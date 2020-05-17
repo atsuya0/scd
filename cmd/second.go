@@ -143,19 +143,13 @@ func (s *second) addCurrentPath() error {
 	if err != nil {
 		return err
 	}
-	homeDir, err := os.UserHomeDir()
+	index, root, err := s.getRoot()
 	if err != nil {
 		return err
 	}
-	for i, root := range s.roots {
-		if strings.HasPrefix(wd, strings.Replace(root.Path, "~", homeDir, 1)) {
-			s.roots = append(s.roots[:i:i], s.roots[i+1:]...)
-			root.Sub = append(root.Sub, wd)
-			s.roots = append(s.roots, root)
-			return nil
-		}
-	}
-	return errors.New("This path is outside the scope.")
+	root.Sub = append(root.Sub, wd)
+	s.roots[index] = root
+	return nil
 }
 
 // Get an undeclared name error.
