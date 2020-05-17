@@ -10,11 +10,11 @@ import (
 )
 
 func change(cmd *cobra.Command, args []string) error {
-	pairs, err := getPairs()
+	roots, err := getRoots()
 	if err != nil {
 		return err
 	}
-	second := newSecond(pairs)
+	second := newSecond(roots)
 
 	var name string
 	if len(args) != 0 {

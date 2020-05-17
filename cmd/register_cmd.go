@@ -30,7 +30,7 @@ func register(options *RegisterOptions) error {
 		return err
 	}
 
-	second.pairs = append(second.pairs, Pair{Name: options.name, Path: options.path})
+	second.roots = append(second.roots, Root{Name: options.name, Path: options.path})
 	if err = second.update(); err != nil {
 		return err
 	}

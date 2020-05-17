@@ -11,18 +11,19 @@ import (
 
 type second struct {
 	file  *os.File
-	pairs []Pair
+	roots []Root
 }
 
-type Pair struct {
-	Name string `json:"name"`
-	Path string `json:"path"`
+type Root struct {
+	Name string   `json:"name"`
+	Path string   `json:"path"`
+	Sub  []string `json:"sub"`
 }
 
 func (s *second) match(name string) (int, string, error) {
-	for i, pair := range s.pairs {
-		if pair.Name == name {
-			return i, pair.Path, nil
+	for i, root := range s.roots {
+		if root.Name == name {
+			return i, root.Path, nil
 		}
 	}
 	err := errors.New(name + " invalid name")
@@ -31,12 +32,12 @@ func (s *second) match(name string) (int, string, error) {
 }
 
 func (s *second) isDuplicate(options RegisterOptions) (err error) {
-	for _, pair := range s.pairs {
-		if pair.Name == options.name {
+	for _, root := range s.roots {
+		if root.Name == options.name {
 			err = errors.New("This name has already been registered.")
 			return
 		}
-		if pair.Path == options.path {
+		if root.Path == options.path {
 			err = errors.New("This path has already been registered.")
 			return
 		}
@@ -45,15 +46,15 @@ func (s *second) isDuplicate(options RegisterOptions) (err error) {
 }
 
 func (s *second) del(i int) error {
-	if 0 <= i && i < len(s.pairs) {
-		s.pairs = append(s.pairs[:i:i], s.pairs[i+1:]...)
+	if 0 <= i && i < len(s.roots) {
+		s.roots = append(s.roots[:i:i], s.roots[i+1:]...)
 		return nil
 	}
 	return errors.New("out of range.")
 }
 
 func (s *second) update() error {
-	json, err := json.MarshalIndent(s.pairs, "", strings.Repeat(" ", 2))
+	json, err := json.MarshalIndent(s.roots, "", strings.Repeat(" ", 2))
 	if err != nil {
 		return err
 	}
@@ -69,8 +70,8 @@ func (s *second) update() error {
 
 func (s *second) choose() (string, error) {
 	var names []string
-	for _, pair := range s.pairs {
-		names = append(names, pair.Name)
+	for _, root := range s.roots {
+		names = append(names, root.Name)
 	}
 	nameChooser, err := chooser.NewChooser(names)
 	if err != nil {
@@ -83,7 +84,7 @@ func (s *second) choose() (string, error) {
 }
 
 // Get an undeclared name error.
-// second := second {pairs: pairs}
-func newSecond(pairs []Pair) second {
-	return second{pairs: pairs}
+// second := second {roots: roots}
+func newSecond(roots []Root) second {
+	return second{roots: roots}
 }
