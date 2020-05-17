@@ -53,7 +53,7 @@ func (s *second) del(i int) error {
 	return errors.New("out of range.")
 }
 
-func (s *second) update() error {
+func (s *second) flush() error {
 	json, err := json.MarshalIndent(s.roots, "", strings.Repeat(" ", 2))
 	if err != nil {
 		return err

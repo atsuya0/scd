@@ -36,7 +36,7 @@ func remove(_ *cobra.Command, args []string) error {
 	if err := second.del(num); err != nil {
 		return err
 	}
-	if err = second.update(); err != nil {
+	if err = second.flush(); err != nil {
 		return err
 	}
 

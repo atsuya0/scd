@@ -31,7 +31,7 @@ func register(options *RegisterOptions) error {
 	}
 
 	second.roots = append(second.roots, Root{Name: options.name, Path: options.path})
-	if err = second.update(); err != nil {
+	if err = second.flush(); err != nil {
 		return err
 	}
 
