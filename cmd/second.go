@@ -5,6 +5,8 @@ import (
 	"errors"
 	"os"
 	"strings"
+
+	"github.com/tayusa/go-chooser"
 )
 
 type second struct {
@@ -63,6 +65,21 @@ func (s *second) update() error {
 	}
 
 	return nil
+}
+
+func (s *second) choose() (string, error) {
+	var names []string
+	for _, pair := range s.pairs {
+		names = append(names, pair.Name)
+	}
+	nameChooser, err := chooser.NewChooser(names)
+	if err != nil {
+		return "", err
+	}
+	if names := nameChooser.Run(); len(names) != 0 {
+		return names[0], nil
+	}
+	return "", nil
 }
 
 // Get an undeclared name error.
