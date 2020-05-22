@@ -43,7 +43,6 @@ func showCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "show",
 		Short: "Show the target path by the second name.",
-		Args:  cobra.MinimumNArgs(1),
 		RunE:  show,
 	}
 
