@@ -1,6 +1,6 @@
 function second() {
   [[ $1 == 'change' ]] \
-    && eval cd $(command second $@ | grep -q '/' || echo '.') 2> /dev/null \
+    && eval cd $(command second $@ | grep '/' || echo '.') 2> /dev/null \
     || command second $@
 }
 
