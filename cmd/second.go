@@ -77,10 +77,11 @@ func (s *second) choose() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if names := nameChooser.Run(); len(names) != 0 {
-		return names[0], nil
+	if _, name, err := nameChooser.SingleRun(); err != nil {
+		return "", err
+	} else {
+		return name, nil
 	}
-	return "", nil
 }
 
 func (s *second) chooseSubDir() (string, error) {
@@ -92,10 +93,11 @@ func (s *second) chooseSubDir() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if dirs := pathChooser.Run(); len(dirs) != 0 {
-		return dirs[0], nil
+	if _, dir, err := pathChooser.SingleRun(); err != nil {
+		return "", err
+	} else {
+		return dir, nil
 	}
-	return "", nil
 }
 
 func (s *second) removeSubDir() error {
@@ -107,18 +109,15 @@ func (s *second) removeSubDir() error {
 	if err != nil {
 		return err
 	}
-	paths := pathChooser.Run()
-	if len(paths) == 0 {
+	index, _, err := pathChooser.SingleRun()
+	if err != nil {
+		return err
+	} else if index < 0 {
 		return nil
 	}
-	for i, dir := range root.Sub {
-		if dir == paths[0] {
-			root.Sub = append(root.Sub[:i:i], root.Sub[i+1:]...)
-			s.roots[rootIndex] = root
-			return nil
-		}
-	}
-	return errors.New("Not found.")
+	root.Sub = append(root.Sub[:index:index], root.Sub[index+1:]...)
+	s.roots[rootIndex] = root
+	return nil
 }
 
 func (s *second) getRoot() (int, Root, error) {
