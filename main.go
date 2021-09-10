@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/tayusa/second/cmd"
+	"github.com/atsuya0/second/cmd"
 )
 
 func main() {
