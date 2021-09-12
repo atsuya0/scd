@@ -1,4 +1,4 @@
-module github.com/atsuya0/second
+module github.com/atsuya0/scd
 
 go 1.17
 

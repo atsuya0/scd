@@ -11,7 +11,7 @@ import (
 )
 
 func getEnvPath() (string, error) {
-	path := os.Getenv("SECOND_LIST_PATH")
+	path := os.Getenv("SCD_LIST_PATH")
 	if path == "" {
 		return "", errors.New("Cannot get path what use defined env")
 	}
@@ -23,7 +23,7 @@ func getXdgPath() (string, error) {
 	if conf == "" {
 		return "", errors.New("Cannot get path what use XDG_CONFIG_HOME")
 	}
-	path := filepath.Join(conf, "second")
+	path := filepath.Join(conf, "scd")
 	if err := os.MkdirAll(path, 0700); err != nil {
 		return "", err
 	}
@@ -36,7 +36,7 @@ func getConfPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	path := filepath.Join(homeDir, ".config", "second")
+	path := filepath.Join(homeDir, ".config", "scd")
 	if err := os.MkdirAll(path, 0700); err != nil {
 		return "", err
 	}

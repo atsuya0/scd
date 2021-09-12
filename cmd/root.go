@@ -6,7 +6,7 @@ import (
 
 func NewCmd() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "second",
+		Use:   "scd",
 		Short: "Change the current working directory with the second name.",
 	}
 
