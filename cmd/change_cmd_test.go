@@ -13,15 +13,15 @@ func TestChange(t *testing.T) {
 		cmd    string
 		output string
 	}{
-		{cmd: "second change bin", output: "/usr/bin"},
-		{cmd: "second change xd", output: "/etc/X11/xorg.conf.d"},
+		{cmd: "scd change bin", output: "/usr/bin"},
+		{cmd: "scd change xd", output: "/etc/X11/xorg.conf.d"},
 	}
 
 	path, err := filepath.Abs("./testdata/test.json")
 	if err != nil {
 		t.Error(err)
 	}
-	if err := os.Setenv("SECOND_LIST_PATH", path); err != nil {
+	if err := os.Setenv("SCD_LIST_PATH", path); err != nil {
 		t.Error(err)
 	}
 

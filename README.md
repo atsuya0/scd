@@ -25,6 +25,6 @@ Display the target path by the second name.
 Initialize the data.
 
 # Setup
-Specify the path to save the data using $SECOND_LIST_PATH.
+Specify the path to save the data using $SCD_LIST_PATH.
 
-It is $XDG_CONFIG_HOME/second/list.json in the default.
+It is $XDG_CONFIG_HOME/scd/list.json in the default.
