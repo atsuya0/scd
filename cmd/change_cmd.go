@@ -7,11 +7,8 @@ import (
 )
 
 func change(cmd *cobra.Command, args []string, sub bool) error {
-	second, err := newSecond()
+	second, err := newSecond(false)
 	if err != nil {
-		return err
-	}
-	if err = second.dataFile.Close(); err != nil {
 		return err
 	}
 

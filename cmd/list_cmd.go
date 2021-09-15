@@ -16,11 +16,8 @@ type ListOptions struct {
 }
 
 func list(options *ListOptions, out io.Writer) error {
-	second, err := newSecond()
+	second, err := newSecond(false)
 	if err != nil {
-		return err
-	}
-	if err = second.dataFile.Close(); err != nil {
 		return err
 	}
 

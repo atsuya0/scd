@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"os"
 	"strings"
 
@@ -152,7 +153,7 @@ func (s *second) addSubDir() error {
 	return nil
 }
 
-func newSecond() (second, error) {
+func newSecond(writable bool) (second, error) {
 	path, err := getDataPath()
 	if err != nil {
 		return second{}, err
@@ -160,15 +161,26 @@ func newSecond() (second, error) {
 
 	var dataFile *os.File
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		dataFile, err = os.Create(path)
-		return second{dataFile: dataFile, roots: make([]Root, 0)}, err
+		if writable {
+			dataFile, err = os.Create(path)
+			return second{dataFile: dataFile, roots: make([]Root, 0)}, err
+		}
+		return second{}, errors.New("Execute \"$ scd init\"")
+
 	} else if err != nil {
 		return second{}, err
-	} else {
-		dataFile, err = os.OpenFile(path, os.O_RDWR, 0600)
-		if err != nil {
-			return second{}, err
-		}
+	}
+
+	dataFile, err = os.OpenFile(path, os.O_RDWR, 0600)
+	if err != nil {
+		return second{}, err
+	}
+	if !writable {
+		defer func() {
+			if err = dataFile.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
 	}
 
 	buffer := bytes.NewBuffer(nil)

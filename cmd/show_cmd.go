@@ -8,11 +8,8 @@ import (
 )
 
 func show(cmd *cobra.Command, args []string) error {
-	second, err := newSecond()
+	second, err := newSecond(false)
 	if err != nil {
-		return err
-	}
-	if err = second.dataFile.Close(); err != nil {
 		return err
 	}
 

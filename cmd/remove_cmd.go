@@ -7,15 +7,15 @@ import (
 )
 
 func remove(args []string, sub bool) error {
-	second, err := newSecond()
+	second, err := newSecond(true)
+	if err != nil {
+		return err
+	}
 	defer func() {
 		if err = second.dataFile.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
-	if err != nil {
-		return err
-	}
 
 	if sub {
 		if err := second.removeSubDir(); err != nil {
