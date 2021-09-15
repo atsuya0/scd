@@ -27,4 +27,4 @@ Initialize the data.
 # Setup
 Specify the path to save the data using $SCD_DATA_PATH.
 
-It is $XDG_DATA_HOME/scd/list.json in the default.
+It is "$XDG_DATA_HOME/scd" in the default.
