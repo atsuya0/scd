@@ -59,7 +59,7 @@ function print_available_session_names() {
     <(scd list --name) <(tmux ls -F '#{session_name}')
 }
 
-function scd_with_tmux_session() {
+function scd_with_tmux() {
   [[ -z ${commands[scd]} ]] \
     && { echo 'scd is required.';  return 1; }
   [[ -z ${commands[tmux]} ]] \
@@ -83,11 +83,11 @@ function scd_with_tmux_session() {
   tmux switch-client -t ${session_name}
 }
 
-function _scd_with_tmux_session() {
+function _scd_with_tmux() {
   _values \
     'Session names' \
     $(print_available_session_names)
 }
-compdef _scd_with_tmux_session scd_with_tmux_session
+compdef _scd_with_tmux scd_with_tmux
 
-alias tscd='scd_with_tmux_session'
+alias tscd='scd_with_tmux'
