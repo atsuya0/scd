@@ -41,7 +41,7 @@ func getConfPath() (string, error) {
 	return filepath.Join(path, "list.json"), nil
 }
 
-func getSecondPath() (string, error) {
+func getDataFile() (string, error) {
 	if path, err := getEnvPath(); err == nil {
 		return path, nil
 	}
