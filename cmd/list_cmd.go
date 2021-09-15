@@ -16,7 +16,7 @@ type ListOptions struct {
 }
 
 func list(options *ListOptions, out io.Writer) error {
-	second, err := getSecond()
+	second, err := newSecond()
 	if err != nil {
 		return err
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 func change(cmd *cobra.Command, args []string, sub bool) error {
-	second, err := getSecond()
+	second, err := newSecond()
 	if err != nil {
 		return err
 	}

@@ -8,7 +8,7 @@ import (
 )
 
 func show(cmd *cobra.Command, args []string) error {
-	second, err := getSecond()
+	second, err := newSecond()
 	if err != nil {
 		return err
 	}

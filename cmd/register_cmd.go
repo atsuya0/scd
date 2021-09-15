@@ -17,7 +17,7 @@ type RegisterOptions struct {
 }
 
 func register(options *RegisterOptions) error {
-	second, err := getSecond()
+	second, err := newSecond()
 	defer func() {
 		if err = second.dataFile.Close(); err != nil {
 			log.Fatalln(err)
