@@ -9,7 +9,7 @@ import (
 func remove(args []string, sub bool) error {
 	second, err := getSecond()
 	defer func() {
-		if err = second.file.Close(); err != nil {
+		if err = second.dataFile.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()

@@ -10,8 +10,8 @@ import (
 )
 
 type second struct {
-	file  *os.File
-	roots []Root
+	dataFile *os.File
+	roots    []Root
 }
 
 type Root struct {
@@ -58,10 +58,10 @@ func (s *second) flush() error {
 	if err != nil {
 		return err
 	}
-	if err := s.file.Truncate(0); err != nil {
+	if err := s.dataFile.Truncate(0); err != nil {
 		return err
 	}
-	if _, err = s.file.WriteAt(json, 0); err != nil {
+	if _, err = s.dataFile.WriteAt(json, 0); err != nil {
 		return err
 	}
 

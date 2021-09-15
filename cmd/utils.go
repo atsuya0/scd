@@ -13,21 +13,21 @@ func getSecond() (second, error) {
 		return second{}, err
 	}
 
-	var file *os.File
+	var dataFile *os.File
 	if _, err := os.Stat(path); os.IsNotExist(err) {
-		file, err = os.Create(path)
-		return second{file: file, roots: make([]Root, 0)}, err
+		dataFile, err = os.Create(path)
+		return second{dataFile: dataFile, roots: make([]Root, 0)}, err
 	} else if err != nil {
 		return second{}, err
 	} else {
-		file, err = os.OpenFile(path, os.O_RDWR, 0600)
+		dataFile, err = os.OpenFile(path, os.O_RDWR, 0600)
 		if err != nil {
 			return second{}, err
 		}
 	}
 
 	buffer := bytes.NewBuffer(nil)
-	if _, err := buffer.ReadFrom(file); err != nil {
+	if _, err := buffer.ReadFrom(dataFile); err != nil {
 		return second{}, err
 	}
 	var roots []Root
@@ -35,7 +35,7 @@ func getSecond() (second, error) {
 		return second{}, err
 	}
 
-	return second{file: file, roots: roots}, nil
+	return second{dataFile: dataFile, roots: roots}, nil
 }
 
 func getRoots() ([]Root, error) {
@@ -49,18 +49,18 @@ func getRoots() ([]Root, error) {
 	} else if err != nil {
 		return make([]Root, 0), err
 	}
-	file, err := os.Open(path)
+	dataFile, err := os.Open(path)
 	if err != nil {
 		return make([]Root, 0), err
 	}
 	defer func() {
-		if err := file.Close(); err != nil {
+		if err := dataFile.Close(); err != nil {
 			log.Fatalln(err)
 		}
 	}()
 
 	buffer := bytes.NewBuffer(nil)
-	if _, err := buffer.ReadFrom(file); err != nil {
+	if _, err := buffer.ReadFrom(dataFile); err != nil {
 		return make([]Root, 0), err
 	}
 	var roots []Root
