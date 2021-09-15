@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 )
 
-func getDataPath() (string, error) {
-	errMsg := "Failed to get the data path"
+func getDataDir() (string, error) {
+	errMsg := "Failed to get the data directory"
 
 	if path := os.Getenv("SCD_DATA_PATH"); path != "" {
 		return path, nil
@@ -30,10 +30,10 @@ func getDataPath() (string, error) {
 	return "", errors.New(errMsg)
 }
 
-func getDataFile() (string, error) {
-	path, err := getDataPath()
+func getDataPath() (string, error) {
+	path, err := getDataDir()
 	if err != nil {
-		return "", errors.New("Failed to get the data file")
+		return "", errors.New("Failed to get the data path")
 	}
 	return filepath.Join(path, "list.json"), nil
 }

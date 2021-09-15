@@ -8,7 +8,7 @@ import (
 )
 
 func getSecond() (second, error) {
-	path, err := getDataFile()
+	path, err := getDataPath()
 	if err != nil {
 		return second{}, err
 	}
@@ -39,7 +39,7 @@ func getSecond() (second, error) {
 }
 
 func getRoots() ([]Root, error) {
-	path, err := getDataFile()
+	path, err := getDataPath()
 	if err != nil {
 		return make([]Root, 0), err
 	}

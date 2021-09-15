@@ -26,7 +26,7 @@ func initialize(_ *cobra.Command, _ []string) error {
 		return nil
 	}
 
-	path, err := getDataFile()
+	path, err := getDataPath()
 	if err != nil {
 		return err
 	}
