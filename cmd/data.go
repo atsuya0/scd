@@ -8,7 +8,7 @@ import (
 )
 
 func getEnvPath() (string, error) {
-	path := os.Getenv("SCD_LIST_PATH")
+	path := os.Getenv("SCD_DATA_PATH")
 	if path == "" {
 		return "", errors.New("Cannot get path what use defined env")
 	}
