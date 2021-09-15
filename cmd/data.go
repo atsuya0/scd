@@ -16,9 +16,9 @@ func getEnvPath() (string, error) {
 }
 
 func getXdgPath() (string, error) {
-	conf := os.Getenv("XDG_CONFIG_HOME")
+	conf := os.Getenv("XDG_DATA_HOME")
 	if conf == "" {
-		return "", errors.New("Cannot get path what use XDG_CONFIG_HOME")
+		return "", errors.New("Cannot get path what use $XDG_DATA_HOME")
 	}
 	path := filepath.Join(conf, "scd")
 	if err := os.MkdirAll(path, 0700); err != nil {
