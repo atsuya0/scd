@@ -7,50 +7,33 @@ import (
 	"path/filepath"
 )
 
-func getEnvPath() (string, error) {
-	path := os.Getenv("SCD_DATA_PATH")
-	if path == "" {
-		return "", errors.New("Cannot get path what use defined env")
-	}
-	return path, nil
-}
+func getDataPath() (string, error) {
+	errMsg := "Failed to get the data path"
 
-func getXdgPath() (string, error) {
-	conf := os.Getenv("XDG_DATA_HOME")
-	if conf == "" {
-		return "", errors.New("Cannot get path what use $XDG_DATA_HOME")
+	if path := os.Getenv("SCD_DATA_PATH"); path != "" {
+		return path, nil
 	}
-	path := filepath.Join(conf, "scd")
-	if err := os.MkdirAll(path, 0700); err != nil {
-		return "", err
+	if dataHome := os.Getenv("XDG_DATA_HOME"); dataHome != "" {
+		path := filepath.Join(dataHome, "scd")
+		if err := os.MkdirAll(path, 0700); err != nil {
+			return "", fmt.Errorf(errMsg+": %w", err)
+		}
+		return path, nil
 	}
-
-	return filepath.Join(path, "list.json"), nil
-}
-
-func getConfPath() (string, error) {
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		return "", err
+	if homeDir, err := os.UserHomeDir(); err != nil {
+		path := filepath.Join(homeDir, ".local", "share", "scd")
+		if err := os.MkdirAll(path, 0700); err != nil {
+			return "", fmt.Errorf(errMsg+": %w", err)
+		}
+		return path, nil
 	}
-	path := filepath.Join(homeDir, ".local", "share", "scd")
-	if err := os.MkdirAll(path, 0700); err != nil {
-		return "", err
-	}
-
-	return filepath.Join(path, "list.json"), nil
+	return "", errors.New(errMsg)
 }
 
 func getDataFile() (string, error) {
-	if path, err := getEnvPath(); err == nil {
-		return path, nil
+	path, err := getDataPath()
+	if err != nil {
+		return "", errors.New("Failed to get the data file")
 	}
-	if path, err := getXdgPath(); err == nil {
-		return path, nil
-	}
-	if path, err := getConfPath(); err != nil {
-		return path, nil
-	} else {
-		return "", fmt.Errorf("Cannot get the file path to save the data: %w", err)
-	}
+	return filepath.Join(path, "list.json"), nil
 }
