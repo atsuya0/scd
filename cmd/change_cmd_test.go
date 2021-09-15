@@ -17,11 +17,11 @@ func TestChange(t *testing.T) {
 		{cmd: "scd change xd", output: "/etc/X11/xorg.conf.d"},
 	}
 
-	path, err := filepath.Abs("./testdata/test.json")
+	path, err := filepath.Abs("./testdata")
 	if err != nil {
 		t.Error(err)
 	}
-	if err := os.Setenv("SCD_LIST_PATH", path); err != nil {
+	if err := os.Setenv("SCD_DATA_PATH", path); err != nil {
 		t.Error(err)
 	}
 
