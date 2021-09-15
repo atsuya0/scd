@@ -33,7 +33,7 @@ func getConfPath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	path := filepath.Join(homeDir, ".config", "scd")
+	path := filepath.Join(homeDir, ".local", "share", "scd")
 	if err := os.MkdirAll(path, 0700); err != nil {
 		return "", err
 	}
