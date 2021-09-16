@@ -16,23 +16,23 @@ type ListOptions struct {
 }
 
 func list(options *ListOptions, out io.Writer) error {
-	roots, err := getRoots()
+	second, err := newSecond(false)
 	if err != nil {
 		return err
 	}
 
 	if (options.name && options.path) || (!options.name && !options.path) {
-		bytes, err := json.MarshalIndent(roots, "", strings.Repeat(" ", 2))
+		bytes, err := json.MarshalIndent(second.roots, "", strings.Repeat(" ", 2))
 		if err != nil {
 			return err
 		}
 		fmt.Fprintln(out, string(bytes))
 	} else if options.name {
-		for _, root := range roots {
+		for _, root := range second.roots {
 			fmt.Fprintln(out, root.Name)
 		}
 	} else if options.path {
-		for _, root := range roots {
+		for _, root := range second.roots {
 			fmt.Fprintln(out, root.Path)
 		}
 	}

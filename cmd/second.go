@@ -1,8 +1,10 @@
 package cmd
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"os"
 	"strings"
 
@@ -10,8 +12,8 @@ import (
 )
 
 type second struct {
-	file  *os.File
-	roots []Root
+	dataFile *os.File
+	roots    []Root
 }
 
 type Root struct {
@@ -58,10 +60,10 @@ func (s *second) flush() error {
 	if err != nil {
 		return err
 	}
-	if err := s.file.Truncate(0); err != nil {
+	if err := s.dataFile.Truncate(0); err != nil {
 		return err
 	}
-	if _, err = s.file.WriteAt(json, 0); err != nil {
+	if _, err = s.dataFile.WriteAt(json, 0); err != nil {
 		return err
 	}
 
@@ -151,8 +153,44 @@ func (s *second) addSubDir() error {
 	return nil
 }
 
-// Get an undeclared name error.
-// second := second {roots: roots}
-func newSecond(roots []Root) second {
-	return second{roots: roots}
+func newSecond(writable bool) (second, error) {
+	path, err := getDataPath()
+	if err != nil {
+		return second{}, err
+	}
+
+	var dataFile *os.File
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		if writable {
+			dataFile, err = os.Create(path)
+			return second{dataFile: dataFile, roots: make([]Root, 0)}, err
+		}
+		return second{}, errors.New("Execute \"$ scd init\"")
+
+	} else if err != nil {
+		return second{}, err
+	}
+
+	dataFile, err = os.OpenFile(path, os.O_RDWR, 0600)
+	if err != nil {
+		return second{}, err
+	}
+	if !writable {
+		defer func() {
+			if err = dataFile.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+	}
+
+	buffer := bytes.NewBuffer(nil)
+	if _, err := buffer.ReadFrom(dataFile); err != nil {
+		return second{}, err
+	}
+	var roots []Root
+	if err = json.Unmarshal(buffer.Bytes(), &roots); err != nil {
+		return second{}, err
+	}
+
+	return second{dataFile: dataFile, roots: roots}, nil
 }

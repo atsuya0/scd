@@ -17,15 +17,15 @@ type RegisterOptions struct {
 }
 
 func register(options *RegisterOptions) error {
-	second, err := getSecond()
-	defer func() {
-		if err = second.file.Close(); err != nil {
-			log.Fatalln(err)
-		}
-	}()
+	second, err := newSecond(true)
 	if err != nil {
 		return err
 	}
+	defer func() {
+		if err = second.dataFile.Close(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	if options.sub {
 		err := second.addSubDir()

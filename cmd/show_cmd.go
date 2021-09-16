@@ -8,11 +8,10 @@ import (
 )
 
 func show(cmd *cobra.Command, args []string) error {
-	roots, err := getRoots()
+	second, err := newSecond(false)
 	if err != nil {
 		return err
 	}
-	second := newSecond(roots)
 
 	var name string
 	if len(args) != 0 {

@@ -1,18 +1,16 @@
 package cmd
 
 import (
-
 	// "syscall"
 
 	"github.com/spf13/cobra"
 )
 
 func change(cmd *cobra.Command, args []string, sub bool) error {
-	roots, err := getRoots()
+	second, err := newSecond(false)
 	if err != nil {
 		return err
 	}
-	second := newSecond(roots)
 
 	if sub {
 		path, err := second.chooseSubDir()
