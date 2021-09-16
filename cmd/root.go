@@ -16,6 +16,7 @@ func NewCmd() *cobra.Command {
 	cmd.AddCommand(listCmd())
 	cmd.AddCommand(removeCmd())
 	cmd.AddCommand(initializeCmd())
+	cmd.AddCommand(scriptCmd())
 
 	return cmd
 }

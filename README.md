@@ -25,6 +25,12 @@ Display the target path by the second name.
 Initialize the data.
 
 # Setup
-Specify the path to save the data using $SCD_DATA_PATH.
-
-It is "$XDG_DATA_HOME/scd" in the default.
+## Load the zsh script
+Add this line to your .zshrc.
+```shell
+source <(scd script)
+```
+## Data file
+The data is saved in $XDG_DATA_HOME/scd.  
+If $XDG_DATA_HOME is either not set or empty, a default equal to $HOME/.local/share should be used.  
+It can also be specified by $SCD_DATA_PATH.
