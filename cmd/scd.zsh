@@ -36,7 +36,7 @@ function _scd() {
         (show)
           _values \
             'Second names' \
-            $(second list --name)
+            $(scd list --name)
         ;;
         (list)
           _arguments \
