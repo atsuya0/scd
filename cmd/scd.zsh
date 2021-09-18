@@ -79,7 +79,7 @@ function scd_with_tmux() {
       && { echo 'already exists'; return 1; }
   fi
 
-  tmux new-session -s ${session_name} -d -c $(command scd change ${session_name})
+  tmux new-session -s ${session_name} -d -c $(scd show ${session_name})
   tmux switch-client -t ${session_name}
 }
 
